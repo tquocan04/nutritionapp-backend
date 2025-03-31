@@ -15,7 +15,9 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureRepository();
+builder.Services.ConfigureService();
 
 builder.Services.AddSwaggerGen(c =>
 {
