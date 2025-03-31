@@ -1,0 +1,32 @@
+services:
+  nutritionapp:
+    image: ${DOCKER_REGISTRY-}nutritionapp
+    build:
+      context: .
+      dockerfile: nutritionapp/Dockerfile
+    container_name: api_nutrition
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      DatabaseSettings__DefaultConnection: "Server=sqlnutrition;Database=nutrition;User Id=sa;Password=Nutrition@pp123;TrustServerCertificate=true"
+    ports:
+      - "8000:8080"
+    depends_on:
+      - sqlnutrition
+    restart: always
+
+  sqlnutrition: 
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlnutrition
+    environment:
+      MSSQL_SA_PASSWORD: "Nutrition@pp123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1430:1433"
+    volumes:
+      - sql_nutrition:/var/opt/mssql
+    restart: always
+
+volumes:
+  sql_nutrition:
+    name: sql_nutrition

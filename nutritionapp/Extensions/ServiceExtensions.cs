@@ -1,6 +1,9 @@
 ﻿using Datas;
 using Features;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace nutritionapp.Extensions
 {
@@ -17,6 +20,39 @@ namespace nutritionapp.Extensions
         public static void ConfigureRepository(this IServiceCollection services)
         {
             services.AddScoped<IRepositoryManager, RepositoryManager>();
+        }
+        
+        public static void ConfigureService(this IServiceCollection services)
+        {
+            services.AddScoped<IServiceManager, ServiceManager>();
+        }
+
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtSetting = configuration.GetSection("Jwt");
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters   //tham so xac thuc cho jwt
+                {
+                    //cap token: true-> dich vu, false->tu cap
+                    ValidateIssuer = false,
+                    //ValidIssuer = jwtSetting["Issuer"],
+
+                    ValidateAudience = false,
+                    //ValidAudience = jwtSetting["Audience"],
+
+                    ClockSkew = TimeSpan.Zero, // bo tg chenh lech
+                    ValidateLifetime = true,    //xac thuc thoi gian ton tai cua token
+
+                    //ky vao token
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting["Secret"])),
+                    ValidateIssuerSigningKey = true
+                };
+            });
         }
     }
 }
