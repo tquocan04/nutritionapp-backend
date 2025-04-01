@@ -34,6 +34,17 @@ namespace Datas
             }
         }
 
+        public DbSet<DailyPlan> DailyPlans { get; set; } = null!;
+        public DbSet<Credential> Credentials { get; set; } = null!;
+        public DbSet<WeightTracking> WeightTrackings { get; set; } = null!;
+        public DbSet<Dinner> Dinners { get; set; } = null!;
+        public DbSet<ItemDinner> ItemDinners { get; set; } = null!;
+        public DbSet<Breakfast> Breakfasts { get; set; } = null!;
+        public DbSet<ItemBreakfast> ItemBreakfasts { get; set; } = null!;
+        public DbSet<Lunch> Lunches { get; set; } = null!;
+        public DbSet<ItemLunch> ItemLunches { get; set; } = null!;
+        public DbSet<Food> Foods { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
 
@@ -42,6 +53,9 @@ namespace Datas
             base.OnModelCreating(builder);
 
             builder.ApplyConfiguration(new RoleConfiguration());
+            builder.ApplyConfiguration(new BreakfastConfiguration());
+            builder.ApplyConfiguration(new DinnerConfiguration());
+            builder.ApplyConfiguration(new LunchConfiguration());
         }
     }
 }
