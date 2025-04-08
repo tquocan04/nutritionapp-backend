@@ -18,7 +18,7 @@ namespace Features.UserLogin.Repository
         {
             var result = await _context.Users
                 .AsNoTracking()
-                .Where(u => u.Email == login.Username && u.Password == login.Password)
+                .Where(u => u.Username == login.Username && u.Password == login.Password)
                 .FirstOrDefaultAsync();
             
             return result;

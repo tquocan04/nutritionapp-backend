@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Datas.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250401060311_CompleteEntities")]
-    partial class CompleteEntities
+    [Migration("20250408165043_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,27 +67,6 @@ namespace Datas.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Domains.Credential", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Provider")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("User_id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Credentials");
                 });
 
             modelBuilder.Entity("Domains.DailyPlan", b =>
@@ -331,32 +310,6 @@ namespace Datas.Migrations
                     b.ToTable("Lunches");
                 });
 
-            modelBuilder.Entity("Domains.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "ADMIN",
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = "USER",
-                            Name = "User"
-                        });
-                });
-
             modelBuilder.Entity("Domains.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -366,6 +319,9 @@ namespace Datas.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
+                    b.Property<float?>("BMR")
+                        .HasColumnType("real");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -373,8 +329,14 @@ namespace Datas.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Height")
+                    b.Property<float?>("Height")
                         .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -384,23 +346,23 @@ namespace Datas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<float?>("R")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("TDEE")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("TargetWeight")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<float>("TargetWeight")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Weight")
+                    b.Property<float?>("Weight")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -439,15 +401,6 @@ namespace Datas.Migrations
                         .IsRequired();
 
                     b.Navigation("DailyPlan");
-                });
-
-            modelBuilder.Entity("Domains.Credential", b =>
-                {
-                    b.HasOne("Domains.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domains.DailyPlan", b =>
@@ -535,17 +488,6 @@ namespace Datas.Migrations
                     b.Navigation("DailyPlan");
                 });
 
-            modelBuilder.Entity("Domains.User", b =>
-                {
-                    b.HasOne("Domains.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("Domains.WeightTracking", b =>
                 {
                     b.HasOne("Domains.User", "User")
@@ -591,11 +533,6 @@ namespace Datas.Migrations
             modelBuilder.Entity("Domains.Lunch", b =>
                 {
                     b.Navigation("ItemLunches");
-                });
-
-            modelBuilder.Entity("Domains.Role", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

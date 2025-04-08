@@ -2,5 +2,5 @@
 
 namespace Features.UserLogin.Requests
 {
-    public record LoginRequest([EmailAddress] string Username, string Password);
+    public record LoginRequest(string Username, string Password);
 }

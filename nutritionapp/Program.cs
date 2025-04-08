@@ -1,4 +1,5 @@
 ﻿using Datas;
+using Features.UserFeatures.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using nutritionapp.Extensions;
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddSwaggerGen(c =>
 {

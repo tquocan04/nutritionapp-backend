@@ -1,9 +1,10 @@
-﻿using Features.UserLogin.Requests;
+﻿using Domains;
+using Features.UserLogin.Requests;
 
 namespace Features.UserLogin.Services
 {
     public interface ILoginService
     {
-        Task<(string, string)> Login(LoginRequest login);
+        Task<(string, User)> Login(LoginRequest login);
     }
 }

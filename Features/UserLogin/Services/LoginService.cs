@@ -1,4 +1,5 @@
-﻿using Features.UserLogin.Exceptions;
+﻿using Domains;
+using Features.UserLogin.Exceptions;
 using Features.UserLogin.Requests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -19,18 +20,17 @@ namespace Features.UserLogin.Services
             _configuration = configuration;
         }
 
-        private List<Claim> GetClaim(LoginRequest login, string role, string id)
+        private List<Claim> GetClaim(LoginRequest login, string id)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, id),
                 new Claim(ClaimTypes.Email, login.Username),
-                new Claim(ClaimTypes.Role, role)
             };
             return claims;
         }
 
-        private string GenerateToken(LoginRequest login, string role, string id)
+        private string GenerateToken(LoginRequest login, string id)
         {
             var expiryyear = int.Parse(_configuration["Jwt:TokenExpiredInYear"]);
 
@@ -41,7 +41,7 @@ namespace Features.UserLogin.Services
             var tokeOptions = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                claims: GetClaim(login, role, id),
+                claims: GetClaim(login, id),
                 expires: DateTime.Now.AddYears(expiryyear),
                 signingCredentials: signinCredentials
             );
@@ -49,13 +49,13 @@ namespace Features.UserLogin.Services
             return tokenString;
         }
 
-        public async Task<(string, string)> Login(LoginRequest login)
+        public async Task<(string, User)> Login(LoginRequest login)
         {
             var result = await _repositoryManager.Login.CheckLogin(login) ?? throw new InvalidLogin();
 
-            var token = GenerateToken(login, result.RoleId, result.Id.ToString());
+            var token = GenerateToken(login, result.Id.ToString());
 
-            return (token, result.RoleId);
+            return (token, result);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Features.UserLogin.Requests;
 using Features.UserLogin.Response;
+using Features.UserLogin.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Features.UserLogin
@@ -8,13 +9,10 @@ namespace Features.UserLogin
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IRepositoryManager _repositoryManager;
         private readonly IServiceManager _serviceManager;
 
-        public LoginController(IRepositoryManager repositoryManager,
-            IServiceManager serviceManager)
+        public LoginController(IServiceManager serviceManager)
         {
-            _repositoryManager = repositoryManager;
             _serviceManager = serviceManager;
         }
 
@@ -30,10 +28,11 @@ namespace Features.UserLogin
 
             return Ok(new LoginResponse
             {
-                Role = result.Item2,
-                Token = $"Bearer {result.Item1}"
+                Token = $"Bearer {result.Item1}",
+                Image = result.Item2.Image,
+                Status = result.Item2.IsActive
             }
-                );
+            );
         }
     }
 }

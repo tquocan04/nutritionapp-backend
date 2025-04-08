@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Datas.Migrations
 {
     /// <inheritdoc />
-    public partial class CompleteEntities : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,15 +24,28 @@ namespace Datas.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Height = table.Column<float>(type: "real", nullable: true),
+                    Weight = table.Column<float>(type: "real", nullable: true),
+                    TargetWeight = table.Column<float>(type: "real", nullable: true),
+                    R = table.Column<float>(type: "real", nullable: true),
+                    BMR = table.Column<float>(type: "real", nullable: true),
+                    TDEE = table.Column<float>(type: "real", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,52 +69,6 @@ namespace Datas.Migrations
                         name: "FK_Foods_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Height = table.Column<float>(type: "real", nullable: false),
-                    Weight = table.Column<float>(type: "real", nullable: false),
-                    TargetWeight = table.Column<float>(type: "real", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Credentials",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Provider = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    User_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Credentials", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Credentials_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
                         principalColumn: "Id");
                 });
 
@@ -301,25 +266,11 @@ namespace Datas.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { "ADMIN", "Admin" },
-                    { "USER", "User" }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Breakfasts_DailyPlan_id",
                 table: "Breakfasts",
                 column: "DailyPlan_id",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Credentials_UserId",
-                table: "Credentials",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DailyPlans_UserId",
@@ -374,11 +325,6 @@ namespace Datas.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WeightTrackings_UserId",
                 table: "WeightTrackings",
                 column: "UserId");
@@ -387,9 +333,6 @@ namespace Datas.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Credentials");
-
             migrationBuilder.DropTable(
                 name: "ItemBreakfasts");
 
@@ -422,9 +365,6 @@ namespace Datas.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
         }
     }
 }

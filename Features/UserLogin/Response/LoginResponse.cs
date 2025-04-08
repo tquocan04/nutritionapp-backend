@@ -2,7 +2,8 @@
 {
     public class LoginResponse
     {
-        public string Role { get; set; } = null!;
         public string Token { get; set; } = null!;
+        public string Image { get; set; } = null!;
+        public bool Status { get; set; }
     }
 }
