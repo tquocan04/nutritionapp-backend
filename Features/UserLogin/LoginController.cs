@@ -3,6 +3,7 @@ using Features.UserLogin.Requests;
 using Features.UserLogin.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Features.UserLogin
@@ -47,7 +48,7 @@ namespace Features.UserLogin
 
             var result = await _serviceManager.LoginService.InformationDetail(req, id);
 
-            return Ok(new MessageResponse<User>
+            return Ok(new MessageResponse<IList<string>>
             {
                 Message = "Successful.",
                 Data = result

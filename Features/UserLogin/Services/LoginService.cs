@@ -15,6 +15,7 @@ namespace Features.UserLogin.Services
         private readonly IRepositoryManager _repositoryManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private const float caloPerKg = 7700;
 
         public LoginService(IRepositoryManager repositoryManager, IConfiguration configuration, IMapper mapper) 
         {
@@ -61,7 +62,7 @@ namespace Features.UserLogin.Services
             return (token, result);
         }
 
-        public async Task<User> InformationDetail(InformationDetailRequest req, Guid id)
+        public async Task<IList<string>> InformationDetail(InformationDetailRequest req, Guid id)
         {
             var user = await _repositoryManager.Login.Getuser(id) ?? throw new UserNotFoundException(id);
 
@@ -77,9 +78,17 @@ namespace Features.UserLogin.Services
             user.TDEE = user.BMR * user.R;
 
             _repositoryManager.User.Update(user);
+
+            float diff = Math.Abs((float)(req.Weight - req.TargetWeight));
+
+            IList<string> timeList = [];
+
+            timeList.Add(Math.Round((diff * caloPerKg / 200)).ToString() + " days");
+            timeList.Add(Math.Round((diff * caloPerKg / 500)).ToString() + " days");
+            
             await _repositoryManager.SaveAsync();
 
-            return user;
+            return timeList;
         }
     }
 }
