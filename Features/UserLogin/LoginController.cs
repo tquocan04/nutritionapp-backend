@@ -1,7 +1,9 @@
-﻿using Features.UserLogin.Requests;
+﻿using Domains;
+using Features.UserLogin.Requests;
 using Features.UserLogin.Response;
-using Features.UserLogin.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Features.UserLogin
 {
@@ -10,10 +12,12 @@ namespace Features.UserLogin
     public class LoginController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
+        private readonly IRepositoryManager _repositoryManager;
 
-        public LoginController(IServiceManager serviceManager)
+        public LoginController(IServiceManager serviceManager, IRepositoryManager repositoryManager)
         {
             _serviceManager = serviceManager;
+            _repositoryManager = repositoryManager;
         }
 
         [HttpPost("authentication")]
@@ -33,6 +37,21 @@ namespace Features.UserLogin
                 Status = result.Item2.IsActive
             }
             );
+        }
+        
+        [HttpPost("information")]
+        [Authorize]
+        public async Task<IActionResult> InformationDetail([FromBody] InformationDetailRequest req)
+        {
+            Guid id = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await _serviceManager.LoginService.InformationDetail(req, id);
+
+            return Ok(new MessageResponse<User>
+            {
+                Message = "Successful.",
+                Data = result
+            });
         }
     }
 }

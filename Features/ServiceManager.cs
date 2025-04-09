@@ -12,7 +12,7 @@ namespace Features
 
         public ServiceManager(IRepositoryManager repositoryManager, IConfiguration configuration, IMapper mapper) 
         {
-            _loginService = new Lazy<ILoginService>(() => new LoginService(repositoryManager, configuration));
+            _loginService = new Lazy<ILoginService>(() => new LoginService(repositoryManager, configuration, mapper));
             _userService = new Lazy<IUserService>(() => new UserService(repositoryManager, mapper));
         }
         public ILoginService LoginService => _loginService.Value;

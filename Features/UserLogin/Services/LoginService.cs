@@ -1,4 +1,5 @@
-﻿using Domains;
+﻿using AutoMapper;
+using Domains;
 using Features.UserLogin.Exceptions;
 using Features.UserLogin.Requests;
 using Microsoft.Extensions.Configuration;
@@ -13,11 +14,13 @@ namespace Features.UserLogin.Services
     {
         private readonly IRepositoryManager _repositoryManager;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public LoginService(IRepositoryManager repositoryManager, IConfiguration configuration) 
+        public LoginService(IRepositoryManager repositoryManager, IConfiguration configuration, IMapper mapper) 
         {
             _repositoryManager = repositoryManager;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         private List<Claim> GetClaim(LoginRequest login, string id)
@@ -56,6 +59,27 @@ namespace Features.UserLogin.Services
             var token = GenerateToken(login, result.Id.ToString());
 
             return (token, result);
+        }
+
+        public async Task<User> InformationDetail(InformationDetailRequest req, Guid id)
+        {
+            var user = await _repositoryManager.Login.Getuser(id) ?? throw new UserNotFoundException(id);
+
+            _mapper.Map(req, user);
+            
+            float bmr = (float)(10 * req.Weight + 6.25 * req.Height - 5 * req.Age);
+
+            if (req.Gender.Equals("male", StringComparison.CurrentCultureIgnoreCase))
+                user.BMR = bmr + 5;
+            else
+                user.BMR = bmr - 161;
+
+            user.TDEE = user.BMR * user.R;
+
+            _repositoryManager.User.Update(user);
+            await _repositoryManager.SaveAsync();
+
+            return user;
         }
     }
 }

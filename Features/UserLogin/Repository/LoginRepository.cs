@@ -23,5 +23,14 @@ namespace Features.UserLogin.Repository
             
             return result;
         }
+        
+        public async Task<User?> Getuser(Guid? id)
+        {
+            var result = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id);
+            
+            return result;
+        }
     }
 }
