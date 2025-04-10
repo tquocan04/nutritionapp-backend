@@ -1,4 +1,5 @@
 ﻿using Datas;
+using Features.SignalR;
 using Features.UserFeatures.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -20,6 +21,8 @@ builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddSignalR();
+builder.Services.AddHostedService<NotificationService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -51,7 +54,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5000")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5000", "http://127.0.0.1:5500")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // Nếu sử dụng cookie, bật tùy chọn này
@@ -68,6 +71,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapHub<ChatHub>("/chathub");
 
 app.UseCors("AllowAll");
 
