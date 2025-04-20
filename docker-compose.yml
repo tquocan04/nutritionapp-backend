@@ -27,6 +27,32 @@ services:
       - sql_nutrition:/var/opt/mssql
     restart: always
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/etc:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    command: nginx -g 'daemon off;'
+    ports:
+      - "80:80"
+      # - "443:443" 
+    depends_on:
+      - nutritionapp
+    restart: always
+    
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/etc:/etc/letsencrypt:rw
+      - ./certbot/www:/var/www/certbot:rw
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    depends_on: 
+      - nginx
+
+
 volumes:
   sql_nutrition:
     name: sql_nutrition
