@@ -8,7 +8,6 @@ namespace Domains
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public string Username { get; set; } = null!;
         public ushort Age { get; set; }
         public string? Gender { get; set; }
         public float? Height { get; set; }

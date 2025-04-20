@@ -6,11 +6,12 @@ namespace Domains
     {
         public Guid Id { get; set; }
         public ushort Amount { get; set; }
-
-        // n-1 Food
-        [ForeignKey(nameof(Food_id))]
-        public Guid Food_id { get; set; }
-        public Food? Food { get; set; }
+        public string Name { get; set; } = null!;
+        public float Calories { get; set; }
+        public float Carb { get; set; }
+        public float Fat { get; set; }
+        public float Protein { get; set; }
+        public string? Image { get; set; }
 
         // n-1 Lunch
         [ForeignKey(nameof(Lunch_id))]

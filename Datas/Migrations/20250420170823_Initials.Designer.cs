@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Datas.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250408165043_Initial")]
-    partial class Initial
+    [Migration("20250420170823_Initials")]
+    partial class Initials
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,21 +52,6 @@ namespace Datas.Migrations
                         .IsUnique();
 
                     b.ToTable("Breakfasts");
-                });
-
-            modelBuilder.Entity("Domains.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Domains.DailyPlan", b =>
@@ -153,44 +138,6 @@ namespace Datas.Migrations
                     b.ToTable("Dinners");
                 });
 
-            modelBuilder.Entity("Domains.Food", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("Calories")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Carb")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid?>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Category_id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("Fat")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Protein")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Foods");
-                });
-
             modelBuilder.Entity("Domains.ItemBreakfast", b =>
                 {
                     b.Property<Guid>("Id")
@@ -206,17 +153,28 @@ namespace Datas.Migrations
                     b.Property<Guid>("Breakfast_id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FoodId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
 
-                    b.Property<Guid>("Food_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<float>("Carb")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BreakfastId");
-
-                    b.HasIndex("FoodId");
 
                     b.ToTable("ItemBreakfasts");
                 });
@@ -230,23 +188,34 @@ namespace Datas.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Carb")
+                        .HasColumnType("real");
+
                     b.Property<Guid?>("DinnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Dinner_id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FoodId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<float>("Fat")
+                        .HasColumnType("real");
 
-                    b.Property<Guid>("Food_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DinnerId");
-
-                    b.HasIndex("FoodId");
 
                     b.ToTable("ItemDinners");
                 });
@@ -260,11 +229,17 @@ namespace Datas.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("FoodId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
 
-                    b.Property<Guid>("Food_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<float>("Carb")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("LunchId")
                         .HasColumnType("uniqueidentifier");
@@ -272,9 +247,14 @@ namespace Datas.Migrations
                     b.Property<Guid>("Lunch_id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("FoodId");
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("LunchId");
 
@@ -355,10 +335,6 @@ namespace Datas.Migrations
                     b.Property<float?>("TargetWeight")
                         .HasColumnType("real");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<float?>("Weight")
                         .HasColumnType("real");
 
@@ -423,28 +399,13 @@ namespace Datas.Migrations
                     b.Navigation("DailyPlan");
                 });
 
-            modelBuilder.Entity("Domains.Food", b =>
-                {
-                    b.HasOne("Domains.Category", "Category")
-                        .WithMany("Foods")
-                        .HasForeignKey("CategoryId");
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Domains.ItemBreakfast", b =>
                 {
                     b.HasOne("Domains.Breakfast", "Breakfast")
                         .WithMany("ItemBreakfasts")
                         .HasForeignKey("BreakfastId");
 
-                    b.HasOne("Domains.Food", "Food")
-                        .WithMany("ItemBreakfasts")
-                        .HasForeignKey("FoodId");
-
                     b.Navigation("Breakfast");
-
-                    b.Navigation("Food");
                 });
 
             modelBuilder.Entity("Domains.ItemDinner", b =>
@@ -453,26 +414,14 @@ namespace Datas.Migrations
                         .WithMany("ItemDinners")
                         .HasForeignKey("DinnerId");
 
-                    b.HasOne("Domains.Food", "Food")
-                        .WithMany("ItemDinners")
-                        .HasForeignKey("FoodId");
-
                     b.Navigation("Dinner");
-
-                    b.Navigation("Food");
                 });
 
             modelBuilder.Entity("Domains.ItemLunch", b =>
                 {
-                    b.HasOne("Domains.Food", "Food")
-                        .WithMany("ItemLunches")
-                        .HasForeignKey("FoodId");
-
                     b.HasOne("Domains.Lunch", "Lunch")
                         .WithMany("ItemLunches")
                         .HasForeignKey("LunchId");
-
-                    b.Navigation("Food");
 
                     b.Navigation("Lunch");
                 });
@@ -502,11 +451,6 @@ namespace Datas.Migrations
                     b.Navigation("ItemBreakfasts");
                 });
 
-            modelBuilder.Entity("Domains.Category", b =>
-                {
-                    b.Navigation("Foods");
-                });
-
             modelBuilder.Entity("Domains.DailyPlan", b =>
                 {
                     b.Navigation("Breakfast");
@@ -519,15 +463,6 @@ namespace Datas.Migrations
             modelBuilder.Entity("Domains.Dinner", b =>
                 {
                     b.Navigation("ItemDinners");
-                });
-
-            modelBuilder.Entity("Domains.Food", b =>
-                {
-                    b.Navigation("ItemBreakfasts");
-
-                    b.Navigation("ItemDinners");
-
-                    b.Navigation("ItemLunches");
                 });
 
             modelBuilder.Entity("Domains.Lunch", b =>
