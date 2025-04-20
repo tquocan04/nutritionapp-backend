@@ -8,6 +8,5 @@ namespace Features.UserFeatures.Requests.Register
         [EmailAddress]
         public string Email { get; init; } = null!;
         public string Password { get; init; } = null!;
-        public string Username { get; init; } = null!;
     }
 }

@@ -15,12 +15,9 @@ namespace Features.UserFeatures.Service
         {
             if (await _repositoryManager.User.CheckEmailExist(req))
                 throw new EmailBadRequestException(req.Email);
-            
-            if (await _repositoryManager.User.CheckUsernameExist(req))
-                throw new UsernameBadRequestException(req.Username);
 
             User newUser = _mapper.Map<User>(req);
-
+            newUser.Username = "";
             await _repositoryManager.User.Create(newUser);
 
             await _repositoryManager.SaveAsync();

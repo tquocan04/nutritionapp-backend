@@ -35,7 +35,8 @@ namespace Features.UserLogin
             {
                 Token = $"Bearer {result.Item1}",
                 Image = result.Item2.Image,
-                Status = result.Item2.IsActive
+                Status = result.Item2.IsActive,
+                Name = result.Item2.Name,
             }
             );
         }
