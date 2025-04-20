@@ -1,5 +1,4 @@
 ﻿using Datas;
-using Features.SignalR;
 using Features.UserFeatures.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -21,8 +20,6 @@ builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddSignalR();
-builder.Services.AddHostedService<NotificationService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -71,8 +68,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.MapHub<ChatHub>("/chathub");
 
 app.UseCors("AllowAll");
 

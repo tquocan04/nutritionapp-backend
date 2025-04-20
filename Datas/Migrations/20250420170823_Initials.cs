@@ -6,23 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Datas.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Initials : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -31,7 +19,6 @@ namespace Datas.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Height = table.Column<float>(type: "real", nullable: true),
@@ -46,30 +33,6 @@ namespace Datas.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Foods",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Calories = table.Column<long>(type: "bigint", nullable: false),
-                    Carb = table.Column<long>(type: "bigint", nullable: false),
-                    Fat = table.Column<long>(type: "bigint", nullable: false),
-                    Protein = table.Column<long>(type: "bigint", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Category_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Foods", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Foods_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -194,8 +157,12 @@ namespace Datas.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Food_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Calories = table.Column<float>(type: "real", nullable: false),
+                    Carb = table.Column<float>(type: "real", nullable: false),
+                    Fat = table.Column<float>(type: "real", nullable: false),
+                    Protein = table.Column<float>(type: "real", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Breakfast_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BreakfastId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -207,11 +174,6 @@ namespace Datas.Migrations
                         column: x => x.BreakfastId,
                         principalTable: "Breakfasts",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ItemBreakfasts_Foods_FoodId",
-                        column: x => x.FoodId,
-                        principalTable: "Foods",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -220,8 +182,12 @@ namespace Datas.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Food_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Calories = table.Column<float>(type: "real", nullable: false),
+                    Carb = table.Column<float>(type: "real", nullable: false),
+                    Fat = table.Column<float>(type: "real", nullable: false),
+                    Protein = table.Column<float>(type: "real", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Dinner_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DinnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -233,11 +199,6 @@ namespace Datas.Migrations
                         column: x => x.DinnerId,
                         principalTable: "Dinners",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ItemDinners_Foods_FoodId",
-                        column: x => x.FoodId,
-                        principalTable: "Foods",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -246,19 +207,18 @@ namespace Datas.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Food_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Calories = table.Column<float>(type: "real", nullable: false),
+                    Carb = table.Column<float>(type: "real", nullable: false),
+                    Fat = table.Column<float>(type: "real", nullable: false),
+                    Protein = table.Column<float>(type: "real", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Lunch_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LunchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemLunches", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ItemLunches_Foods_FoodId",
-                        column: x => x.FoodId,
-                        principalTable: "Foods",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ItemLunches_Lunches_LunchId",
                         column: x => x.LunchId,
@@ -284,34 +244,14 @@ namespace Datas.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Foods_CategoryId",
-                table: "Foods",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ItemBreakfasts_BreakfastId",
                 table: "ItemBreakfasts",
                 column: "BreakfastId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemBreakfasts_FoodId",
-                table: "ItemBreakfasts",
-                column: "FoodId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ItemDinners_DinnerId",
                 table: "ItemDinners",
                 column: "DinnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemDinners_FoodId",
-                table: "ItemDinners",
-                column: "FoodId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemLunches_FoodId",
-                table: "ItemLunches",
-                column: "FoodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemLunches_LunchId",
@@ -352,13 +292,7 @@ namespace Datas.Migrations
                 name: "Dinners");
 
             migrationBuilder.DropTable(
-                name: "Foods");
-
-            migrationBuilder.DropTable(
                 name: "Lunches");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "DailyPlans");

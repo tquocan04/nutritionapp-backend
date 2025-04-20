@@ -17,7 +17,6 @@ namespace Features.UserFeatures.Service
                 throw new EmailBadRequestException(req.Email);
 
             User newUser = _mapper.Map<User>(req);
-            newUser.Username = "";
             await _repositoryManager.User.Create(newUser);
 
             await _repositoryManager.SaveAsync();
