@@ -29,7 +29,7 @@ namespace Features.UserLogin.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, id),
-                new Claim(ClaimTypes.Email, login.Username),
+                new Claim(ClaimTypes.Email, login.Email),
             };
             return claims;
         }
