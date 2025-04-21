@@ -1,5 +1,8 @@
 ﻿using Datas;
+using Features.DailyJobs;
 using Features.UserFeatures.Mapping;
+using Hangfire;
+using Hangfire.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using nutritionapp.Extensions;
@@ -7,6 +10,15 @@ using nutritionapp.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureSqlContext(builder.Configuration);
+
+// Hangfire
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseDefaultTypeSerializer()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("Connection")));
+
+builder.Services.AddHangfireServer();
 
 // Add services to the container.
 builder.Services.AddControllers()
@@ -47,17 +59,6 @@ builder.Services.AddSwaggerGen(c =>
         });
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5000", "http://127.0.0.1:5500")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Nếu sử dụng cookie, bật tùy chọn này
-    });
-});
-
 var app = builder.Build();
 
 app.ConfigureExceptionHandler();
@@ -69,11 +70,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// Dashboard /hangfire
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new AllowAllAuthorizationFilter() }
+}); 
 
 app.MapControllers();
 using (var scope = app.Services.CreateScope())
@@ -93,4 +98,18 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Migration failed: {ex.Message}");
     }
 }
+
+// Lên lịch job chạy mỗi ngày lúc 00:00
+RecurringJob.AddOrUpdate<DailyPlanJob>("daily-plan-creation-job",
+    job => job.Execute(),
+    "0 0 * * *"); // Cron: 00:00 hàng ngày
+
 app.Run();
+
+public class AllowAllAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        return true; // Cho phép tất cả truy cập
+    }
+}
