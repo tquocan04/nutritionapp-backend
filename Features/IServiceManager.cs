@@ -1,4 +1,5 @@
-﻿using Features.UserFeatures.Service;
+﻿using Features.FoodItems.Services;
+using Features.UserFeatures.Service;
 using Features.UserLogin.Services;
 
 namespace Features
@@ -7,5 +8,6 @@ namespace Features
     {
         ILoginService LoginService { get; }
         IUserService UserService { get; }
+        IFoodItemService FoodItemService { get; }
     }
 }
