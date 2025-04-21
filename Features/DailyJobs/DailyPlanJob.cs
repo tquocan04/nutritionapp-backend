@@ -43,19 +43,24 @@ namespace Features.DailyJobs
 
                     float caloPerDay = 7700 / user.Time;
 
-                    float calo = (float)user.TDEE;
-                    float fat = (float)user.Weight * 1000; // gram
-                    float protein = (float)(user.Weight * 1000 * 1.1);
+                    float calo = (float)user.TDEE; // calo
+                    float fat = (float)user.Weight; // gram
+                    float protein = (float)user.Weight; // gram
 
-                    if (user.Weight < user.TargetWeight)    // tang can
+                    if (user.Weight < user.TargetWeight) // tang can
                     {
                         calo += caloPerDay;
                         fat *= 0.33f;
-                    }
-                    else
+                    } 
+                    else if (user.Weight > user.TargetWeight) // giam can
                     {
                         calo -= caloPerDay;
                         fat *= 0.23f;
+                        protein *= 1.1f;
+                    }
+                    else // giu can
+                    {
+                        fat *= 0.33f;
                     }
 
                     Guid dailyId = Guid.NewGuid();

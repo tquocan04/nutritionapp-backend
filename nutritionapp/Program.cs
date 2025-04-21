@@ -100,9 +100,14 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Lên lịch job chạy mỗi ngày lúc 00:00
-RecurringJob.AddOrUpdate<DailyPlanJob>("daily-plan-creation-job",
+RecurringJob.AddOrUpdate<DailyPlanJob>(
+    "daily-plan-creation-job",
     job => job.Execute(),
-    "0 0 * * *"); // Cron: 00:00 hàng ngày
+    "0 0 * * *", // 00:00 hàng ngày
+    new RecurringJobOptions
+    {
+        TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh") // UTC+7 theo giờ của docker container
+    });
 
 app.Run();
 

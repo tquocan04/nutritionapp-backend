@@ -76,6 +76,7 @@ namespace Features.UserLogin.Services
                 user.BMR = bmr - 161;
 
             user.TDEE = user.BMR * user.R;
+            user.IsActive = true;
 
             _repositoryManager.User.Update(user);
 
