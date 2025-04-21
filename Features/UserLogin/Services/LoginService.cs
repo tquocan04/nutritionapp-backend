@@ -90,5 +90,15 @@ namespace Features.UserLogin.Services
 
             return timeList;
         }
+
+        public async Task UpdateTimeAsync(int time, Guid id)
+        {
+            var user = await _repositoryManager.Login.Getuser(id) ?? throw new UserNotFoundException(id);
+
+            user.Time = time;
+
+            _repositoryManager.User.Update(user);
+            await _repositoryManager.SaveAsync();
+        }
     }
 }

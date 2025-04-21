@@ -7,5 +7,6 @@ namespace Features.UserLogin.Services
     {
         Task<(string, User)> Login(LoginRequest login);
         Task<IList<string>> InformationDetail(InformationDetailRequest req, Guid id);
+        Task UpdateTimeAsync(int time, Guid id);
     }
 }

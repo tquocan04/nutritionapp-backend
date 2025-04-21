@@ -1,9 +1,7 @@
-﻿using Domains;
-using Features.UserLogin.Requests;
+﻿using Features.UserLogin.Requests;
 using Features.UserLogin.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Features.UserLogin
@@ -53,6 +51,20 @@ namespace Features.UserLogin
             {
                 Message = "Successful.",
                 Data = result
+            });
+        }
+        
+        [HttpPost("time")]
+        [Authorize]
+        public async Task<IActionResult> Time(int time)
+        {
+            Guid id = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            await _serviceManager.LoginService.UpdateTimeAsync(time, id);
+
+            return Ok(new MessageResponse<string>
+            {
+                Message = "Successful.",
             });
         }
     }

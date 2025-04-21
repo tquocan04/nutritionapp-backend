@@ -4,9 +4,9 @@
     (
         int Age,
         string Gender,
-        float Height,
-        float Weight,
+        float Height, // cm
+        float Weight, // kg
         float R,
-        float TargetWeight
+        float TargetWeight // kg
     );
 }
