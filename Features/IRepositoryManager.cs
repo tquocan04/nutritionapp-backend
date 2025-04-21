@@ -1,4 +1,5 @@
-﻿using Features.UserFeatures.Repository;
+﻿using Features.FoodItems.Repositories;
+using Features.UserFeatures.Repository;
 using Features.UserLogin.Repository;
 
 namespace Features
@@ -7,6 +8,7 @@ namespace Features
     {
         ILoginRepository Login { get; }
         IUserRepository User { get; }
+        IFoodItemRepository FoodItem { get; }
         Task SaveAsync();
     }
 }
