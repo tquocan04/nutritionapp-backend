@@ -27,8 +27,4 @@
     <ProjectReference Include="..\ExceptionHandler\ExceptionHandler.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FoodItems\Responses\" />
-  </ItemGroup>
-
 </Project>
