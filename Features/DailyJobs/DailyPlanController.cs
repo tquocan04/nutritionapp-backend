@@ -29,5 +29,19 @@ namespace Features.DailyJobs
                 Data = result
             });
         }
+        
+        [HttpGet("weekly")]
+        public async Task<IActionResult> GetDailyPlanOfWeek()
+        {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await _service.DailyPlanService.GetCaloriesInWeekAsync(userId);
+
+            return Ok(new DailyPlanResponse<WeeklyProgressDTO>
+            {
+                Message = "Successful.",
+                Data = result
+            });
+        }
     }
 }
