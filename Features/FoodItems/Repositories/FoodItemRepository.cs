@@ -8,17 +8,17 @@ namespace Features.FoodItems.Repositories
     {
         private readonly Context _context = context;
 
-        public async Task<DailyPlan?> GetDailyPlanAsync(DateOnly date, bool tracking)
+        public async Task<DailyPlan?> GetDailyPlanAsync(Guid userId, DateOnly date, bool tracking)
         {
             if (!tracking)
             {
                 return await _context.DailyPlans
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(dp => dp.Date == date);
+                    .FirstOrDefaultAsync(dp => dp.User_id == userId && dp.Date == date);
             }
 
             return await _context.DailyPlans
-                .FirstOrDefaultAsync(dp => dp.Date == date);
+                .FirstOrDefaultAsync(dp => dp.User_id == userId && dp.Date == date);
 
         }
 
@@ -71,6 +71,51 @@ namespace Features.FoodItems.Repositories
         public async Task AddNewDinnerItemAsync(ItemDinner item)
         {
             await _context.ItemDinners.AddAsync(item);
+        }
+
+        public async Task<IEnumerable<ItemBreakfast>?> GetBreakfastItemListAsync(Guid breakfastId, bool tracking)
+        {
+            if (!tracking)
+            {
+                return await _context.ItemBreakfasts
+                    .AsNoTracking()
+                    .Where(b => b.Breakfast_id == breakfastId)
+                    .ToListAsync();
+            }
+
+            return await _context.ItemBreakfasts
+                    .Where(b => b.Breakfast_id == breakfastId)
+                    .ToListAsync();
+        }
+        
+        public async Task<IEnumerable<ItemLunch>?> GetLunchItemListAsync(Guid lunchId, bool tracking)
+        {
+            if (!tracking)
+            {
+                return await _context.ItemLunches
+                    .AsNoTracking()
+                    .Where(l => l.Lunch_id == lunchId)
+                    .ToListAsync();
+            }
+
+            return await _context.ItemLunches
+                    .Where(l => l.Lunch_id == lunchId)
+                    .ToListAsync();
+        }
+        
+        public async Task<IEnumerable<ItemDinner>?> GetDinnerItemListAsync(Guid dinnerId, bool tracking)
+        {
+            if (!tracking)
+            {
+                return await _context.ItemDinners
+                    .AsNoTracking()
+                    .Where(d => d.Dinner_id == dinnerId)
+                    .ToListAsync();
+            }
+
+            return await _context.ItemDinners
+                    .Where(d => d.Dinner_id == dinnerId)
+                    .ToListAsync();
         }
     }
 }

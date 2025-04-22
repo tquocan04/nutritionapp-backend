@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domains;
+using Features.FoodItems.DTOs;
 using Features.FoodItems.Requests;
 
 namespace Features.FoodItems.Mapping
@@ -28,6 +29,13 @@ namespace Features.FoodItems.Mapping
                 .ForMember(dest => dest.Amount,
                             otp => otp.MapFrom(src => src.Grams))
                 .ReverseMap();
+
+            CreateMap<ItemDTO, ItemBreakfast>().ReverseMap();
+            CreateMap<ItemDTO, ItemLunch>().ReverseMap();
+            CreateMap<ItemDTO, ItemDinner>().ReverseMap();
+            CreateMap<BreakfastDTO, Breakfast>().ReverseMap();
+            CreateMap<LunchDTO, Lunch>().ReverseMap();
+            CreateMap<DinnerDTO, Dinner>().ReverseMap();
         }
     }
 }
