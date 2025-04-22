@@ -32,6 +32,13 @@ namespace Features.FoodItems.Services
                     ?? throw new MealNotFoundException(dailyPlan.Breakfast_id);
 
                 var item = _mapper.Map<ItemBreakfast>(req);
+
+                // /100g
+                item.Calories /= 100 * req.Grams;
+                item.Carb /= 100 * req.Grams;
+                item.Fat /= 100 * req.Grams;
+                item.Protein /= 100 * req.Grams;
+
                 item.Breakfast_id = breakfast.Id;
                 await _manager.FoodItem.AddNewBreakfastItemAsync(item);
 
@@ -52,6 +59,13 @@ namespace Features.FoodItems.Services
                     ?? throw new MealNotFoundException(dailyPlan.Lunch_id);
 
                 var item = _mapper.Map<ItemLunch>(req);
+
+                // /100g
+                item.Calories /= 100 * req.Grams;
+                item.Carb /= 100 * req.Grams;
+                item.Fat /= 100 * req.Grams;
+                item.Protein /= 100 * req.Grams;
+
                 item.Lunch_id = lunch.Id;
                 await _manager.FoodItem.AddNewLunchItemAsync(item);
 
@@ -72,6 +86,13 @@ namespace Features.FoodItems.Services
                     ?? throw new MealNotFoundException(dailyPlan.Dinner_id);
 
                 var item = _mapper.Map<ItemDinner>(req);
+
+                // /100g
+                item.Calories /= 100 * req.Grams;
+                item.Carb /= 100 * req.Grams;
+                item.Fat /= 100 * req.Grams;
+                item.Protein /= 100 * req.Grams;
+
                 item.Dinner_id = dinner.Id;
                 await _manager.FoodItem.AddNewDinnerItemAsync(item);
 
