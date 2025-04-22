@@ -15,7 +15,7 @@ namespace Features.FoodItems
         private readonly IServiceManager _service = service;
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewFoodItem([FromBody] FoodItemRequest req)
+        public async Task<IActionResult> CreateNewFoodItem([FromBody] List<FoodItemRequest> req)
         {
             Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             await _service.FoodItemService.CreateNewFoodItemAsync(userId, req);

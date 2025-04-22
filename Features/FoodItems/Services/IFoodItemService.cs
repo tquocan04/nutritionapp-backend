@@ -6,7 +6,7 @@ namespace Features.FoodItems.Services
 {
     public interface IFoodItemService
     {
-        Task CreateNewFoodItemAsync(Guid userId, FoodItemRequest req);
+        Task CreateNewFoodItemAsync(Guid userId, List<FoodItemRequest> req);
         Task<MealsDTO> GetMealAsync(Guid userId, DateOnly date);
     }
 }

@@ -17,94 +17,97 @@ namespace Features.FoodItems.Services
             _mapper = mapper;
         }
 
-        public async Task CreateNewFoodItemAsync(Guid userId, FoodItemRequest req)
+        public async Task CreateNewFoodItemAsync(Guid userId, List<FoodItemRequest> requests)
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
-
             DateTime now = DateTime.Now;
 
             var dailyPlan = await _manager.FoodItem.GetDailyPlanAsync(userId, today, true)
                 ?? throw new DailyPlanNotFoundException(today);
 
-            if (now.Hour >= 0 && now.Hour <= 8) // breakfast
+            if (now.Hour >= 0 && now.Hour <= 8)
             {
                 var breakfast = await _manager.FoodItem.GetBreakfastAsync(dailyPlan.Breakfast_id, true)
                     ?? throw new MealNotFoundException(dailyPlan.Breakfast_id);
 
-                var item = _mapper.Map<ItemBreakfast>(req);
+                foreach (var req in requests)
+                {
+                    var item = _mapper.Map<ItemBreakfast>(req);
 
-                // /100g
-                item.Calories = req.Calories / 100 * req.Grams;
-                item.Carb = req.Carbs / 100 * req.Grams;
-                item.Fat = req.Fat / 100 * req.Grams;
-                item.Protein = req.Protein / 100 * req.Grams;
+                    item.Calories = req.Calories / 100 * req.Grams;
+                    item.Carb = req.Carbs / 100 * req.Grams;
+                    item.Fat = req.Fat / 100 * req.Grams;
+                    item.Protein = req.Protein / 100 * req.Grams;
 
-                item.Breakfast_id = breakfast.Id;
-                await _manager.FoodItem.AddNewBreakfastItemAsync(item);
+                    item.Breakfast_id = breakfast.Id;
+                    await _manager.FoodItem.AddNewBreakfastItemAsync(item);
 
-                breakfast.TotalCalories += item.Calories;
-                breakfast.TotalFats += item.Fat;
-                breakfast.TotalCarbs += item.Carb;
-                breakfast.TotalProteins += item.Protein;
+                    breakfast.TotalCalories += item.Calories;
+                    breakfast.TotalFats += item.Fat;
+                    breakfast.TotalCarbs += item.Carb;
+                    breakfast.TotalProteins += item.Protein;
 
-                dailyPlan.TotalCalories += item.Calories;
-                dailyPlan.TotalFats += item.Fat;
-                dailyPlan.TotalCarbs += item.Carb;
-                dailyPlan.TotalProteins += item.Protein;
+                    dailyPlan.TotalCalories += item.Calories;
+                    dailyPlan.TotalFats += item.Fat;
+                    dailyPlan.TotalCarbs += item.Carb;
+                    dailyPlan.TotalProteins += item.Protein;
+                }
             }
-
-            else if (now.Hour >= 9 && now.Hour <= 1) // lunch
+            else if (now.Hour >= 9 && now.Hour <= 13)
             {
                 var lunch = await _manager.FoodItem.GetLunchAsync(dailyPlan.Lunch_id, true)
                     ?? throw new MealNotFoundException(dailyPlan.Lunch_id);
 
-                var item = _mapper.Map<ItemLunch>(req);
+                foreach (var req in requests)
+                {
+                    var item = _mapper.Map<ItemLunch>(req);
 
-                // /100g
-                item.Calories = req.Calories / 100 * req.Grams;
-                item.Carb = req.Carbs / 100 * req.Grams;
-                item.Fat = req.Fat / 100 * req.Grams;
-                item.Protein = req.Protein / 100 * req.Grams;
+                    item.Calories = req.Calories / 100 * req.Grams;
+                    item.Carb = req.Carbs / 100 * req.Grams;
+                    item.Fat = req.Fat / 100 * req.Grams;
+                    item.Protein = req.Protein / 100 * req.Grams;
 
-                item.Lunch_id = lunch.Id;
-                await _manager.FoodItem.AddNewLunchItemAsync(item);
+                    item.Lunch_id = lunch.Id;
+                    await _manager.FoodItem.AddNewLunchItemAsync(item);
 
-                lunch.TotalCalories += item.Calories;
-                lunch.TotalFats += item.Fat;
-                lunch.TotalCarbs += item.Carb;
-                lunch.TotalProteins += item.Protein;
+                    lunch.TotalCalories += item.Calories;
+                    lunch.TotalFats += item.Fat;
+                    lunch.TotalCarbs += item.Carb;
+                    lunch.TotalProteins += item.Protein;
 
-                dailyPlan.TotalCalories += item.Calories;
-                dailyPlan.TotalFats += item.Fat;
-                dailyPlan.TotalCarbs += item.Carb;
-                dailyPlan.TotalProteins += item.Protein;
+                    dailyPlan.TotalCalories += item.Calories;
+                    dailyPlan.TotalFats += item.Fat;
+                    dailyPlan.TotalCarbs += item.Carb;
+                    dailyPlan.TotalProteins += item.Protein;
+                }
             }
-
-            else // dinner
+            else
             {
                 var dinner = await _manager.FoodItem.GetDinnerAsync(dailyPlan.Dinner_id, true)
                     ?? throw new MealNotFoundException(dailyPlan.Dinner_id);
 
-                var item = _mapper.Map<ItemDinner>(req);
+                foreach (var req in requests)
+                {
+                    var item = _mapper.Map<ItemDinner>(req);
 
-                // /100g
-                item.Calories = req.Calories / 100 * req.Grams;
-                item.Carb = req.Carbs / 100 * req.Grams;
-                item.Fat = req.Fat / 100 * req.Grams;
-                item.Protein = req.Protein / 100 * req.Grams;
+                    item.Calories = req.Calories / 100 * req.Grams;
+                    item.Carb = req.Carbs / 100 * req.Grams;
+                    item.Fat = req.Fat / 100 * req.Grams;
+                    item.Protein = req.Protein / 100 * req.Grams;
 
-                item.Dinner_id = dinner.Id;
-                await _manager.FoodItem.AddNewDinnerItemAsync(item);
+                    item.Dinner_id = dinner.Id;
+                    await _manager.FoodItem.AddNewDinnerItemAsync(item);
 
-                dinner.TotalCalories += item.Calories;
-                dinner.TotalFats += item.Fat;
-                dinner.TotalCarbs += item.Carb;
-                dinner.TotalProteins += item.Protein;
+                    dinner.TotalCalories += item.Calories;
+                    dinner.TotalFats += item.Fat;
+                    dinner.TotalCarbs += item.Carb;
+                    dinner.TotalProteins += item.Protein;
 
-                dailyPlan.TotalCalories += item.Calories;
-                dailyPlan.TotalFats += item.Fat;
-                dailyPlan.TotalCarbs += item.Carb;
-                dailyPlan.TotalProteins += item.Protein;
+                    dailyPlan.TotalCalories += item.Calories;
+                    dailyPlan.TotalFats += item.Fat;
+                    dailyPlan.TotalCarbs += item.Carb;
+                    dailyPlan.TotalProteins += item.Protein;
+                }
             }
 
             await _manager.SaveAsync();
