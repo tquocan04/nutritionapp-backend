@@ -76,8 +76,7 @@ namespace Features.UserLogin.Services
                 user.BMR = bmr - 161;
 
             user.TDEE = user.BMR * user.R;
-            user.IsActive = true;
-
+            
             _repositoryManager.User.Update(user);
 
             float diff = Math.Abs((float)(req.Weight - req.TargetWeight));
@@ -97,6 +96,7 @@ namespace Features.UserLogin.Services
             var user = await _repositoryManager.Login.Getuser(id) ?? throw new UserNotFoundException(id);
 
             user.Time = time;
+            user.IsActive = true;
 
             _repositoryManager.User.Update(user);
             await _repositoryManager.SaveAsync();
