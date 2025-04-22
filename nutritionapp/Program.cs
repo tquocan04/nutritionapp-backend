@@ -103,7 +103,7 @@ using (var scope = app.Services.CreateScope())
 RecurringJob.AddOrUpdate<DailyPlanJob>(
     "daily-plan-creation-job",
     job => job.Execute(),
-    "50 14 * * *", // 00:00 hàng ngày
+    "0 0 * * *", // 00:00 hàng ngày
     new RecurringJobOptions
     {
         TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh") // UTC+7 theo giờ của docker container
