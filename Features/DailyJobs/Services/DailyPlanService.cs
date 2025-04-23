@@ -68,7 +68,7 @@ namespace Features.DailyJobs.Services
                 var dailyListB = await _manager.DailyPlan.GetDailyPlanInWeekAsync(userId, startOfPeriod, endOfPeriod, false)
                 ?? throw new DailyPlanOfUserNotFoundException(userId, startOfPeriod);
 
-                var user = await _manager.DailyPlan.GetUserAsync(userId, false);
+                var user = await _manager.DailyPlan.GetUserAsync(userId, true);
                 var tdee = user.TDEE;
 
                 float totalCalories = 0f;
@@ -87,14 +87,25 @@ namespace Features.DailyJobs.Services
                 float calorieBalance = totalCalories - ((float)tdee * validDays);
                 float weight = calorieBalance / 7700;
 
+                if (user.TargetWeight > user.Weight)
+                {
+                    user.Weight += weight;
+                }
+                else
+                {
+                    user.Weight -= weight;
+                }
+
                 var result1 = new WeeklyProgressDTO
                 {
                     Calories = caloriesList,
                     Weight = new WeightDTO
                     {
-                        Weight = weight
+                        Weight = (float)user.Weight
                     }
                 };
+
+                await _manager.SaveAsync();
 
                 return result1;
             }
