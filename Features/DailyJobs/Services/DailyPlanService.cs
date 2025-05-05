@@ -118,12 +118,25 @@ namespace Features.DailyJobs.Services
                         totalCalories += dailyPlan.TotalCalories;
                         validDays++;
                     }
-                    WeightList weightL = new()
+                    if (date == today)
                     {
-                        Date = date.ToString("dd/MM"),
-                        Value = 0f
-                    };
-
+                        WeightList weightL = new()
+                        {
+                            Date = date.ToString("dd/MM"),
+                            Value = (float)Math.Floor((decimal)user.Weight)
+                        };
+                        weightList.Add(weightL);
+                    }
+                    else
+                    {
+                        WeightList weightL = new()
+                        {
+                            Date = date.ToString("dd/MM"),
+                            Value = 0f
+                        };
+                        weightList.Add(weightL);
+                    }
+                    
                     if (dailyPlan != null)
                     {
                         Nutrition nutrition = new()
@@ -146,8 +159,6 @@ namespace Features.DailyJobs.Services
                         };
                         nutritionList.Add(nutrition);
                     }
-
-                    weightList.Add(weightL);
                 }
 
                 float calorieBalance = totalCalories - ((float)tdee * validDays);
