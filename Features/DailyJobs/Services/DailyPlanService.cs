@@ -37,10 +37,43 @@ namespace Features.DailyJobs.Services
             var endOfWeek = startOfWeek.AddDays(6);
 
             var dailyList = await _manager.DailyPlan.GetDailyPlanInWeekAsync(userId, startOfWeek,
-                endOfWeek, false) 
+                endOfWeek, false)
                 ?? throw new DailyPlanOfUserNotFoundException(userId, startOfWeek);
 
-            var caloriesList = new List<CaloriesDTO>();
+            //var caloriesList = new List<CaloriesDTO>();
+
+            var daily = await _manager.DailyPlan.GetDailyPlanAsync(userId, today, false);
+
+            if (daily == null)
+                return null;
+
+            CaloriesDTO caloriesDTO = new()
+            {
+                Current = daily.TotalCalories,
+                Target = daily.TargetCalories
+            };
+
+            Macros macrosCarbs = new()
+            {
+                Name = "Carbs",
+                Value = daily.TotalCarbs
+            };
+
+            Macros macrosPro = new()
+            {
+                Name = "Protein",
+                Value = daily.TotalProteins
+            };
+
+            Macros macrosFat = new()
+            {
+                Name = "Fat",
+                Value = daily.TotalFats
+            };
+
+            IList<Macros> macros = [macrosCarbs, macrosPro, macrosFat];
+
+            IList<DailyProgress> dailyProgressList = [];
 
             for (var date = startOfWeek; date <= endOfWeek; date = date.AddDays(1))
             {
@@ -48,20 +81,22 @@ namespace Features.DailyJobs.Services
                 var dailyPlan = dailyList.FirstOrDefault(d => d.Date == date);
 
                 // Tạo CaloriesDTO cho ngày hiện tại
-                var calories = new CaloriesDTO
+                var dailyProgress = new DailyProgress
                 {
                     Date = date,
-                    Total = dailyPlan?.TotalCalories ?? 0f, // Nếu không có dữ liệu, Total = 0
-                    Target = dailyPlan?.TargetCalories ?? 0f // Nếu không có dữ liệu, Target = 0
+                    Calories = dailyPlan?.TotalCalories ?? 0f, // Nếu không có dữ liệu, Total = 0
+                    Goal = dailyPlan?.TargetCalories ?? 0f // Nếu không có dữ liệu, Target = 0
                 };
 
-                caloriesList.Add(calories);
+                dailyProgressList.Add(dailyProgress);
             }
 
             DateOnly startOfPeriod;
             DateOnly endOfPeriod;
 
-            if (today.DayOfWeek == DayOfWeek.Wednesday)
+            IList<Nutrition> nutritionList = [];
+
+            if (today.DayOfWeek == DayOfWeek.Monday)
             {
                 startOfPeriod = today.AddDays(-7);
                 endOfPeriod = today.AddDays(-1);
@@ -74,6 +109,8 @@ namespace Features.DailyJobs.Services
                 float totalCalories = 0f;
                 int validDays = 0;
 
+                IList<WeightList> weightList = [];
+
                 for (var date = startOfPeriod; date <= endOfPeriod; date = date.AddDays(1))
                 {
                     var dailyPlan = dailyListB.FirstOrDefault(d => d.Date == date);
@@ -82,10 +119,29 @@ namespace Features.DailyJobs.Services
                         totalCalories += dailyPlan.TotalCalories;
                         validDays++;
                     }
+                    WeightList weightL = new()
+                    {
+                        Date = date,
+                        Value = 0f
+                    };
+
+                    Nutrition nutrition = new()
+                    {
+                        Date = date,
+                        Carbs = dailyPlan.TotalCarbs,
+                        Fat = dailyPlan.TotalFats,
+                        Protein = dailyPlan.TotalProteins
+                    };
+
+                    nutritionList.Add(nutrition);
+
+                    weightList.Add(weightL);
                 }
 
                 float calorieBalance = totalCalories - ((float)tdee * validDays);
                 float weight = calorieBalance / 7700;
+
+                float oldWeight = (float)user.Weight;
 
                 if (user.TargetWeight > user.Weight)
                 {
@@ -98,11 +154,16 @@ namespace Features.DailyJobs.Services
 
                 var result1 = new WeeklyProgressDTO
                 {
-                    Calories = caloriesList,
+                    Calories = caloriesDTO,
+                    DailyProgresses = dailyProgressList,
                     Weight = new WeightDTO
                     {
-                        Weight = (float)user.Weight
-                    }
+                        Current = (float)user.Weight,
+                        Change = Math.Abs((float)user.Weight - oldWeight),
+                        Data = weightList
+                    },
+                    Macros = macros,
+                    Nutrtion = nutritionList
                 };
 
                 await _manager.SaveAsync();
@@ -112,7 +173,7 @@ namespace Features.DailyJobs.Services
 
             var result = new WeeklyProgressDTO
             {
-                Calories = caloriesList,
+                Calories = caloriesDTO,
             };
 
             return result;

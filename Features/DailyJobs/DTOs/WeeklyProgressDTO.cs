@@ -2,19 +2,50 @@
 {
     public class WeeklyProgressDTO
     {
-        public IList<CaloriesDTO>? Calories { get; set; }
+        public CaloriesDTO? Calories { get; set; }
+        public IList<DailyProgress>? DailyProgresses { get; set; }
         public WeightDTO? Weight { get; set; }
+        public IList<Macros>? Macros { get; set; }
+        public IList<Nutrition>? Nutrtion { get; set; }
     }
 
     public class CaloriesDTO
     {
-        public DateOnly Date { get; set; }
-        public float Total { get; set; } = 0;
+        public float Current { get; set; } = 0;
         public float Target { get; set; } = 0;
+    }
+
+    public class DailyProgress
+    {
+        public DateOnly Date {  get; set; }
+        public float? Calories { get; set; }
+        public float? Goal { get; set; }
     }
 
     public class WeightDTO
     {
-        public float Weight { get; set; }
+        public float Current { get; set; } = 0;
+        public float Change { get; set; } = 0;
+        public IList<WeightList>? Data { get; set; }
+    }
+
+    public class WeightList
+    {
+        public DateOnly Date { get; set; }
+        public float? Value { get; set; }
+    }
+
+    public class Macros
+    {
+        public string? Name { get; set; }
+        public float? Value { get; set; }
+    }
+
+    public class Nutrition
+    {
+        public DateOnly Date { get; set; }
+        public float? Carbs { get; set; }
+        public float? Protein { get; set; }
+        public float? Fat { get; set; }
     }
 }

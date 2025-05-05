@@ -20,6 +20,12 @@ namespace Features.UserFeatures.Register
         public async Task<IActionResult> Register([FromBody] RegisterRequest req)
         {
             var result = await _serviceManager.UserService.Register(req);
+
+            if (result == null)
+            {
+                return BadRequest("INVALID VALUE");
+            }
+
             return Ok(new RegisterResponse<NewUserResponseDTO>
             {
                 Message = "Register successful.",

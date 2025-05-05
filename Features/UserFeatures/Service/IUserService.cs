@@ -5,6 +5,6 @@ namespace Features.UserFeatures.Service
 {
     public interface IUserService
     {
-        Task<NewUserResponseDTO> Register(RegisterRequest req);
+        Task<NewUserResponseDTO?> Register(RegisterRequest req);
     }
 }

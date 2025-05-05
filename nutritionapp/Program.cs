@@ -19,6 +19,7 @@ builder.Services.AddHangfire(config => config
     .UseSqlServerStorage(builder.Configuration.GetConnectionString("Connection")));
 
 builder.Services.AddHangfireServer();
+builder.Services.AddHttpClient();
 
 // Add services to the container.
 builder.Services.AddControllers()
