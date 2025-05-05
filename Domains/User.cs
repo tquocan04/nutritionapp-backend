@@ -17,7 +17,7 @@ namespace Domains
         public float? R { get; set; }   //he so van dong
         public float? BMR { get; set; }
         public float? TDEE { get; set; }
-        public string? Image { get; set; } = "https://dev-pullzone.b-cdn.net/sky/students/defaultavt.png";
+        public string? Image { get; set; } = "https://res.cloudinary.com/dn5rrigtr/image/upload/v1746462028/pc2facdxhwzlbqjp20qp.jpg";
         public bool IsActive { get; set; } = false;
     }
 }

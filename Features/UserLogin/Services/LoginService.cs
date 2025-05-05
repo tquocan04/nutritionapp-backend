@@ -168,10 +168,10 @@ namespace Features.UserLogin.Services
                 Breakfast_id = breakfast.Id,
                 Lunch_id = lunch.Id,
                 Dinner_id = dinner.Id,
-                TargetCalories = calo,
-                TargetFats = fat, // gram
-                TargetProteins = protein, // gram
-                TargetCarbs = (calo - protein * 4 - fat * 9) / 4,
+                TargetCalories = (float)Math.Floor((decimal)calo),
+                TargetFats = (float)Math.Floor((decimal)fat), // gram
+                TargetProteins = (float)Math.Floor((decimal)protein), // gram
+                TargetCarbs = (float)Math.Floor((decimal)(calo - protein * 4 - fat * 9) / 4),
                 TotalCalories = 0,
                 TotalFats = 0,
                 TotalProteins = 0,

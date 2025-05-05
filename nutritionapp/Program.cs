@@ -79,7 +79,7 @@ app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new AllowAllAuthorizationFilter() }
-}); 
+});
 
 app.MapControllers();
 using (var scope = app.Services.CreateScope())

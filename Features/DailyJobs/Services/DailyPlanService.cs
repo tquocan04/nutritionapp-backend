@@ -2,7 +2,6 @@
 using Features.DailyJobs.DTOs;
 using Features.DailyJobs.Exceptions;
 using Features.DailyJobs.Requests;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Features.DailyJobs.Services
 {
@@ -42,33 +41,31 @@ namespace Features.DailyJobs.Services
 
             //var caloriesList = new List<CaloriesDTO>();
 
-            var daily = await _manager.DailyPlan.GetDailyPlanAsync(userId, today, false);
-
-            if (daily == null)
-                return null;
+            var daily = await _manager.DailyPlan.GetDailyPlanAsync(userId, today, false)
+                ?? throw new DailyPlanOfUserNotFoundException(userId, startOfWeek);
 
             CaloriesDTO caloriesDTO = new()
             {
-                Current = daily.TotalCalories,
-                Target = daily.TargetCalories
+                Current = (float)Math.Floor((decimal)daily.TotalCalories),
+                Target = (float)Math.Floor((decimal)daily.TargetCalories)
             };
 
             Macros macrosCarbs = new()
             {
                 Name = "Carbs",
-                Value = daily.TotalCarbs
+                Value = (float)Math.Floor((decimal)daily.TotalCarbs)
             };
 
             Macros macrosPro = new()
             {
                 Name = "Protein",
-                Value = daily.TotalProteins
+                Value = (float)Math.Floor((decimal)daily.TotalProteins)
             };
 
             Macros macrosFat = new()
             {
                 Name = "Fat",
-                Value = daily.TotalFats
+                Value = (float)Math.Floor((decimal)daily.TotalFats)
             };
 
             IList<Macros> macros = [macrosCarbs, macrosPro, macrosFat];
@@ -81,14 +78,28 @@ namespace Features.DailyJobs.Services
                 var dailyPlan = dailyList.FirstOrDefault(d => d.Date == date);
 
                 // Tạo CaloriesDTO cho ngày hiện tại
-                var dailyProgress = new DailyProgress
-                {
-                    Date = date,
-                    Calories = dailyPlan?.TotalCalories ?? 0f, // Nếu không có dữ liệu, Total = 0
-                    Goal = dailyPlan?.TargetCalories ?? 0f // Nếu không có dữ liệu, Target = 0
-                };
+                //if (dailyPlan != null)
+                //{
+                    var dailyProgress = new DailyProgress
+                    {
+                        Date = date,
+                        Calories = dailyPlan?.TotalCalories ?? 0f, // Nếu không có dữ liệu, Total = 0
+                        Goal = dailyPlan?.TargetCalories ?? 0f // Nếu không có dữ liệu, Target = 0
+                    };
 
-                dailyProgressList.Add(dailyProgress);
+                    dailyProgressList.Add(dailyProgress);
+                //}
+                //else
+                //{
+                //    var dailyProgress = new DailyProgress
+                //    {
+                //        Date = date,
+                //        Calories = 0f, // Nếu không có dữ liệu, Total = 0
+                //        Goal = 0f // Nếu không có dữ liệu, Target = 0
+                //    };
+
+                //    dailyProgressList.Add(dailyProgress);
+                //}
             }
 
             DateOnly startOfPeriod;
@@ -96,7 +107,7 @@ namespace Features.DailyJobs.Services
 
             IList<Nutrition> nutritionList = [];
 
-            if (today.DayOfWeek == DayOfWeek.Monday)
+            if (today.DayOfWeek == DayOfWeek.Tuesday)
             {
                 startOfPeriod = today.AddDays(-7);
                 endOfPeriod = today.AddDays(-1);
@@ -125,15 +136,28 @@ namespace Features.DailyJobs.Services
                         Value = 0f
                     };
 
-                    Nutrition nutrition = new()
+                    if (dailyPlan != null)
                     {
-                        Date = date,
-                        Carbs = dailyPlan.TotalCarbs,
-                        Fat = dailyPlan.TotalFats,
-                        Protein = dailyPlan.TotalProteins
-                    };
-
-                    nutritionList.Add(nutrition);
+                        Nutrition nutrition = new()
+                        {
+                            Date = date,
+                            Carbs = (float)Math.Floor((decimal)dailyPlan.TotalCarbs),
+                            Fat = (float)Math.Floor((decimal)dailyPlan.TotalFats),
+                            Protein = (float)Math.Floor((decimal)dailyPlan.TotalProteins)
+                        };
+                        nutritionList.Add(nutrition);
+                    }
+                    else
+                    {
+                        Nutrition nutrition = new()
+                        {
+                            Date = date,
+                            Carbs = 0f,
+                            Fat = 0f,
+                            Protein = 0f
+                        };
+                        nutritionList.Add(nutrition);
+                    }
 
                     weightList.Add(weightL);
                 }
@@ -158,7 +182,7 @@ namespace Features.DailyJobs.Services
                     DailyProgresses = dailyProgressList,
                     Weight = new WeightDTO
                     {
-                        Current = (float)user.Weight,
+                        Current = (float)Math.Floor((decimal)user.Weight),
                         Change = Math.Abs((float)user.Weight - oldWeight),
                         Data = weightList
                     },
@@ -166,14 +190,14 @@ namespace Features.DailyJobs.Services
                     Nutrtion = nutritionList
                 };
 
-                await _manager.SaveAsync();
-
                 return result1;
             }
 
             var result = new WeeklyProgressDTO
             {
                 Calories = caloriesDTO,
+                DailyProgresses = dailyProgressList,
+                Macros = macros,
             };
 
             return result;
