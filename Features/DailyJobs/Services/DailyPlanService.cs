@@ -82,24 +82,12 @@ namespace Features.DailyJobs.Services
                 //{
                     var dailyProgress = new DailyProgress
                     {
-                        Date = date,
+                        Date = date.ToString("dd/MM"),
                         Calories = dailyPlan?.TotalCalories ?? 0f, // Nếu không có dữ liệu, Total = 0
                         Goal = dailyPlan?.TargetCalories ?? 0f // Nếu không có dữ liệu, Target = 0
                     };
 
                     dailyProgressList.Add(dailyProgress);
-                //}
-                //else
-                //{
-                //    var dailyProgress = new DailyProgress
-                //    {
-                //        Date = date,
-                //        Calories = 0f, // Nếu không có dữ liệu, Total = 0
-                //        Goal = 0f // Nếu không có dữ liệu, Target = 0
-                //    };
-
-                //    dailyProgressList.Add(dailyProgress);
-                //}
             }
 
             DateOnly startOfPeriod;
@@ -109,8 +97,8 @@ namespace Features.DailyJobs.Services
 
             if (today.DayOfWeek == DayOfWeek.Tuesday)
             {
-                startOfPeriod = today.AddDays(-7);
-                endOfPeriod = today.AddDays(-1);
+                startOfPeriod = today.AddDays(-1);
+                endOfPeriod = today.AddDays(+5);
                 var dailyListB = await _manager.DailyPlan.GetDailyPlanInWeekAsync(userId, startOfPeriod, endOfPeriod, false)
                 ?? throw new DailyPlanOfUserNotFoundException(userId, startOfPeriod);
 
@@ -132,7 +120,7 @@ namespace Features.DailyJobs.Services
                     }
                     WeightList weightL = new()
                     {
-                        Date = date,
+                        Date = date.ToString("dd/MM"),
                         Value = 0f
                     };
 
@@ -140,7 +128,7 @@ namespace Features.DailyJobs.Services
                     {
                         Nutrition nutrition = new()
                         {
-                            Date = date,
+                            Date = date.ToString("dd/MM"),
                             Carbs = (float)Math.Floor((decimal)dailyPlan.TotalCarbs),
                             Fat = (float)Math.Floor((decimal)dailyPlan.TotalFats),
                             Protein = (float)Math.Floor((decimal)dailyPlan.TotalProteins)
@@ -151,7 +139,7 @@ namespace Features.DailyJobs.Services
                     {
                         Nutrition nutrition = new()
                         {
-                            Date = date,
+                            Date = date.ToString("dd/MM"),
                             Carbs = 0f,
                             Fat = 0f,
                             Protein = 0f

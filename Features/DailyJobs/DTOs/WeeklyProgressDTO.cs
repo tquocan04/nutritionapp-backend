@@ -17,7 +17,7 @@
 
     public class DailyProgress
     {
-        public DateOnly Date {  get; set; }
+        public string Date {  get; set; }
         public float? Calories { get; set; }
         public float? Goal { get; set; }
     }
@@ -31,7 +31,7 @@
 
     public class WeightList
     {
-        public DateOnly Date { get; set; }
+        public string Date { get; set; }
         public float? Value { get; set; }
     }
 
@@ -43,7 +43,7 @@
 
     public class Nutrition
     {
-        public DateOnly Date { get; set; }
+        public string Date { get; set; }
         public float? Carbs { get; set; }
         public float? Protein { get; set; }
         public float? Fat { get; set; }
