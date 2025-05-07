@@ -95,7 +95,7 @@ namespace Features.DailyJobs.Services
 
             IList<Nutrition> nutritionList = [];
 
-            if (today.DayOfWeek == DayOfWeek.Tuesday)
+            if (today.DayOfWeek == DayOfWeek.Wednesday)
             {
                 startOfPeriod = today.AddDays(-1);
                 endOfPeriod = today.AddDays(+5);
