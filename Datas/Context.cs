@@ -1,6 +1,4 @@
-﻿//using Datas.SeedConfigurations;
-//using Domains;
-using Datas.SeedConfigurations;
+﻿using Datas.SeedConfigurations;
 using Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -34,14 +32,23 @@ namespace Datas
             }
         }
 
+        public DbSet<DailyPlan> DailyPlans { get; set; } = null!;
+        public DbSet<WeightTracking> WeightTrackings { get; set; } = null!;
+        public DbSet<Dinner> Dinners { get; set; } = null!;
+        public DbSet<ItemDinner> ItemDinners { get; set; } = null!;
+        public DbSet<Breakfast> Breakfasts { get; set; } = null!;
+        public DbSet<ItemBreakfast> ItemBreakfasts { get; set; } = null!;
+        public DbSet<Lunch> Lunches { get; set; } = null!;
+        public DbSet<ItemLunch> ItemLunches { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Role> Roles { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfiguration(new RoleConfiguration());
+            builder.ApplyConfiguration(new BreakfastConfiguration());
+            builder.ApplyConfiguration(new DinnerConfiguration());
+            builder.ApplyConfiguration(new LunchConfiguration());
         }
     }
 }

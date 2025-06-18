@@ -22,30 +22,269 @@ namespace Datas.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domains.Role", b =>
+            modelBuilder.Entity("Domains.Breakfast", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DailyPlan_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("TotalCalories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalCarbs")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalFats")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalProteins")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DailyPlan_id")
+                        .IsUnique();
+
+                    b.ToTable("Breakfasts");
+                });
+
+            modelBuilder.Entity("Domains.DailyPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Breakfast_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly?>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("Dinner_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Lunch_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("TargetCalories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TargetCarbs")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TargetFats")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TargetProteins")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalCalories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalCarbs")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalFats")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalProteins")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("User_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DailyPlans");
+                });
+
+            modelBuilder.Entity("Domains.Dinner", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DailyPlan_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("TotalCalories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalCarbs")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalFats")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalProteins")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DailyPlan_id")
+                        .IsUnique();
+
+                    b.ToTable("Dinners");
+                });
+
+            modelBuilder.Entity("Domains.ItemBreakfast", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("BreakfastId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Breakfast_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Carb")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.HasIndex("BreakfastId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = "ADMIN",
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = "USER",
-                            Name = "User"
-                        });
+                    b.ToTable("ItemBreakfasts");
+                });
+
+            modelBuilder.Entity("Domains.ItemDinner", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Carb")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("DinnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Dinner_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DinnerId");
+
+                    b.ToTable("ItemDinners");
+                });
+
+            modelBuilder.Entity("Domains.ItemLunch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Carb")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("LunchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Lunch_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LunchId");
+
+                    b.ToTable("ItemLunches");
+                });
+
+            modelBuilder.Entity("Domains.Lunch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DailyPlan_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("TotalCalories")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalCarbs")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalFats")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalProteins")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DailyPlan_id")
+                        .IsUnique();
+
+                    b.ToTable("Lunches");
                 });
 
             modelBuilder.Entity("Domains.User", b =>
@@ -54,9 +293,27 @@ namespace Datas.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("BMR")
+                        .HasColumnType("real");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float?>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -66,35 +323,151 @@ namespace Datas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<float?>("R")
+                        .HasColumnType("real");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<float?>("TDEE")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("TargetWeight")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Time")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("Weight")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domains.User", b =>
+            modelBuilder.Entity("Domains.WeightTracking", b =>
                 {
-                    b.HasOne("Domains.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("User_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("WeightTrackings");
+                });
+
+            modelBuilder.Entity("Domains.Breakfast", b =>
+                {
+                    b.HasOne("Domains.DailyPlan", "DailyPlan")
+                        .WithOne("Breakfast")
+                        .HasForeignKey("Domains.Breakfast", "DailyPlan_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("DailyPlan");
                 });
 
-            modelBuilder.Entity("Domains.Role", b =>
+            modelBuilder.Entity("Domains.DailyPlan", b =>
                 {
-                    b.Navigation("Users");
+                    b.HasOne("Domains.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domains.Dinner", b =>
+                {
+                    b.HasOne("Domains.DailyPlan", "DailyPlan")
+                        .WithOne("Dinner")
+                        .HasForeignKey("Domains.Dinner", "DailyPlan_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DailyPlan");
+                });
+
+            modelBuilder.Entity("Domains.ItemBreakfast", b =>
+                {
+                    b.HasOne("Domains.Breakfast", "Breakfast")
+                        .WithMany("ItemBreakfasts")
+                        .HasForeignKey("BreakfastId");
+
+                    b.Navigation("Breakfast");
+                });
+
+            modelBuilder.Entity("Domains.ItemDinner", b =>
+                {
+                    b.HasOne("Domains.Dinner", "Dinner")
+                        .WithMany("ItemDinners")
+                        .HasForeignKey("DinnerId");
+
+                    b.Navigation("Dinner");
+                });
+
+            modelBuilder.Entity("Domains.ItemLunch", b =>
+                {
+                    b.HasOne("Domains.Lunch", "Lunch")
+                        .WithMany("ItemLunches")
+                        .HasForeignKey("LunchId");
+
+                    b.Navigation("Lunch");
+                });
+
+            modelBuilder.Entity("Domains.Lunch", b =>
+                {
+                    b.HasOne("Domains.DailyPlan", "DailyPlan")
+                        .WithOne("Lunch")
+                        .HasForeignKey("Domains.Lunch", "DailyPlan_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DailyPlan");
+                });
+
+            modelBuilder.Entity("Domains.WeightTracking", b =>
+                {
+                    b.HasOne("Domains.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domains.Breakfast", b =>
+                {
+                    b.Navigation("ItemBreakfasts");
+                });
+
+            modelBuilder.Entity("Domains.DailyPlan", b =>
+                {
+                    b.Navigation("Breakfast");
+
+                    b.Navigation("Dinner");
+
+                    b.Navigation("Lunch");
+                });
+
+            modelBuilder.Entity("Domains.Dinner", b =>
+                {
+                    b.Navigation("ItemDinners");
+                });
+
+            modelBuilder.Entity("Domains.Lunch", b =>
+                {
+                    b.Navigation("ItemLunches");
                 });
 #pragma warning restore 612, 618
         }

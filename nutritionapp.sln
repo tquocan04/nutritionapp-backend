@@ -13,6 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Features", "Features\Featur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandler", "ExceptionHandler\ExceptionHandler.csproj", "{C0B7B03F-4F3F-4429-B99E-F18C5FA75827}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5E6BF2A1-F562-41A3-B62C-8C949B1A6890}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nginx", "nginx", "{AD55F2F4-AA10-4610-84DE-DBC35C5630E8}"
+	ProjectSection(SolutionItems) = preProject
+		nginx.conf = nginx.conf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +46,10 @@ Global
 		{C0B7B03F-4F3F-4429-B99E-F18C5FA75827}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0B7B03F-4F3F-4429-B99E-F18C5FA75827}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0B7B03F-4F3F-4429-B99E-F18C5FA75827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E6BF2A1-F562-41A3-B62C-8C949B1A6890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6BF2A1-F562-41A3-B62C-8C949B1A6890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6BF2A1-F562-41A3-B62C-8C949B1A6890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6BF2A1-F562-41A3-B62C-8C949B1A6890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

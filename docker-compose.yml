@@ -1,0 +1,68 @@
+﻿services:
+  nutritionapp:
+    image: ${DOCKER_REGISTRY-}nutritionapp
+    build:
+      context: .
+      dockerfile: nutritionapp/Dockerfile
+    container_name: api_nutrition
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      DatabaseSettings__DefaultConnection: "Server=sqlnutrition;Database=nutrition;User Id=sa;Password=Nutrition@pp123;TrustServerCertificate=true"
+      # Thêm cấu hình để kết nối với Elasticsearch
+      ElasticsearchSettings__Url: "http://elasticsearch:9200" 
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8000:8080"
+    depends_on:
+      - sqlnutrition
+      - elasticsearch # <-- Thêm dependency vào elasticsearch
+    restart: always
+
+  sqlnutrition: 
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlnutrition
+    environment:
+      MSSQL_SA_PASSWORD: "Nutrition@pp123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1430:1433"
+    volumes:
+      - sql_nutrition:/var/opt/mssql
+    restart: always
+  
+  # =================== ELASTICSEARCH SERVICE ===================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0 
+    container_name: elasticsearch_nutrition
+    environment:
+      - discovery.type=single-node # Chạy dưới dạng một node duy nhất
+      - xpack.security.enabled=false # Tắt các tính năng bảo mật trả phí (QUAN TRỌNG CHO DEV)
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Giới hạn RAM sử dụng, rất quan trọng!
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data 
+    restart: always
+  # =================================================================
+
+  # =================== KIBANA SERVICE ===================
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.0
+    container_name: kibana_nutrition
+    environment:
+      # Cho Kibana biết địa chỉ để tìm Elasticsearch trong mạng nội bộ của Docker
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    restart: always
+  # ==========================================================
+
+volumes:
+  sql_nutrition:
+    name: sql_nutrition
+  es_data:
+    name: es_data
