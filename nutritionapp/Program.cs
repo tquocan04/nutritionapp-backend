@@ -1,10 +1,11 @@
-﻿using Datas;
-using Features.DailyJobs;
+﻿using Features.DailyJobs;
+using Features.Externals.Services;
 using Features.UserFeatures.Mapping;
 using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Nest;
 using nutritionapp.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,27 @@ builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddSingleton<IElasticClient>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var url = configuration["ElasticsearchSettings:Url"]; // Đọc từ biến môi trường Docker trước
+
+    // Nếu không có, đọc từ appsettings
+    if (string.IsNullOrEmpty(url))
+        url = configuration.GetValue<string>("ElasticsearchSettings:Url");
+
+    if (string.IsNullOrEmpty(url))
+        throw new InvalidOperationException("Elasticsearch URL is not configured.");
+
+    var settings = new ConnectionSettings(new Uri(url))
+        .PrettyJson() // Giúp log các câu query ra console đẹp hơn (chỉ dùng cho dev)
+        .DefaultIndex("food_recipes"); // Tên index mặc định sẽ làm việc
+
+    return new ElasticClient(settings);
+});
+
+builder.Services.AddScoped<IElasticSeeder, ElasticSeeder>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -85,9 +107,11 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<Context>();
+    var context = services.GetRequiredService<Datas.Context>();
     try
     {
+        var elasticSeeder = services.GetRequiredService<IElasticSeeder>();
+        await elasticSeeder.SeedAsync();
         if (context.Database.GetPendingMigrations().Any())
         {
             Console.WriteLine("Applying pending migrations...");

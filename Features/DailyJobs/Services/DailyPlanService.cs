@@ -5,7 +5,7 @@ using Features.DailyJobs.Requests;
 
 namespace Features.DailyJobs.Services
 {
-    public class DailyPlanService(IRepositoryManager manager, IMapper mapper) 
+    public class DailyPlanService(IRepositoryManager manager, IMapper mapper)
         : IDailyPlanService
     {
         private readonly IRepositoryManager _manager = manager;
@@ -31,7 +31,7 @@ namespace Features.DailyJobs.Services
         public async Task<WeeklyProgressDTO> GetCaloriesInWeekAsync(Guid userId)
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
-            // Tìm ngày đầu tuần (giả sử tuần bắt đầu từ thứ Hai)
+            // ngay dau tuan
             var startOfWeek = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
             var endOfWeek = startOfWeek.AddDays(6);
 
@@ -77,17 +77,15 @@ namespace Features.DailyJobs.Services
                 // Tìm kế hoạch hàng ngày tương ứng với ngày hiện tại
                 var dailyPlan = dailyList.FirstOrDefault(d => d.Date == date);
 
-                // Tạo CaloriesDTO cho ngày hiện tại
-                //if (dailyPlan != null)
-                //{
-                    var dailyProgress = new DailyProgress
-                    {
-                        Date = date.ToString("dd/MM"),
-                        Calories = dailyPlan?.TotalCalories ?? 0f, // Nếu không có dữ liệu, Total = 0
-                        Goal = dailyPlan?.TargetCalories ?? 0f // Nếu không có dữ liệu, Target = 0
-                    };
+                // CaloriesDTO ngay hien tai
+                var dailyProgress = new DailyProgress
+                {
+                    Date = date.ToString("dd/MM"),
+                    Calories = dailyPlan?.TotalCalories ?? 0f, // khong co data -> Total = 0
+                    Goal = dailyPlan?.TargetCalories ?? 0f
+                };
 
-                    dailyProgressList.Add(dailyProgress);
+                dailyProgressList.Add(dailyProgress);
             }
 
             DateOnly startOfPeriod;
@@ -136,7 +134,7 @@ namespace Features.DailyJobs.Services
                         };
                         weightList.Add(weightL);
                     }
-                    
+
                     if (dailyPlan != null)
                     {
                         Nutrition nutrition = new()
