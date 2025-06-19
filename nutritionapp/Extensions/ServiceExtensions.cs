@@ -1,5 +1,6 @@
 ﻿using Datas;
 using Features;
+using Features.Externals.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +26,7 @@ namespace nutritionapp.Extensions
         public static void ConfigureService(this IServiceCollection services)
         {
             services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddScoped<IIndexingService, IndexingService>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

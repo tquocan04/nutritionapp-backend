@@ -1,4 +1,5 @@
-﻿using Features.DailyJobs;
+﻿using DotNetEnv;
+using Features.DailyJobs;
 using Features.Externals.Services;
 using Features.UserFeatures.Mapping;
 using Hangfire;
@@ -7,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Nest;
 using nutritionapp.Extensions;
+
+Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +37,8 @@ builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureService();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IEmbeddingService, GoogleEmbeddingService>();
 
 builder.Services.AddSingleton<IElasticClient>(sp =>
 {
@@ -47,10 +52,7 @@ builder.Services.AddSingleton<IElasticClient>(sp =>
     if (string.IsNullOrEmpty(url))
         throw new InvalidOperationException("Elasticsearch URL is not configured.");
 
-    var settings = new ConnectionSettings(new Uri(url))
-        .PrettyJson() // Giúp log các câu query ra console đẹp hơn (chỉ dùng cho dev)
-        .DefaultIndex("food_recipes"); // Tên index mặc định sẽ làm việc
-
+    var settings = new ConnectionSettings(new Uri(url!)).DefaultIndex("recipes").PrettyJson();
     return new ElasticClient(settings);
 });
 

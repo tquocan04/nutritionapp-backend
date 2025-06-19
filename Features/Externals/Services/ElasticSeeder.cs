@@ -15,77 +15,37 @@ namespace Features.Externals.Services
         /// </summary>
         public async Task SeedAsync()
         {
-            _logger.LogInformation("Bắt đầu quá trình ElasticSeeder...");
+            _logger.LogInformation("Start the ElasticSeeder process...");
 
-            // Gọi hàm tạo index cho công thức
-            await CreateFoodRecipesIndexAsync();
+            await CreateRecipesIndexAsync();
 
-            // Gọi hàm tạo index cho từ điển thành phần
-            await CreateIngredientsMasterIndexAsync();
-
-            _logger.LogInformation("Quá trình ElasticSeeder hoàn tất.");
+            _logger.LogInformation("ElasticSeeder process completed.");
         }
 
         /// <summary>
-        /// Tạo index 'food_recipes' nếu nó chưa tồn tại.
+        /// Tạo index 'recipes' nếu nó chưa tồn tại.
         /// </summary>
-        private async Task CreateFoodRecipesIndexAsync()
+        private async Task CreateRecipesIndexAsync()
         {
-            const string indexName = "food_recipes";
+            const string indexName = "recipes";
             var indexExistsResponse = await _elasticClient.Indices.ExistsAsync(indexName);
 
             if (indexExistsResponse.Exists)
             {
-                _logger.LogInformation("Index '{indexName}' đã tồn tại. Bỏ qua việc tạo mới.", indexName);
+                _logger.LogInformation("Index '{indexName}' already exists.", indexName);
                 return;
             }
 
-            _logger.LogInformation("Index '{indexName}' chưa tồn tại. Đang tạo mới...", indexName);
+            _logger.LogInformation("Index '{indexName}' does not exist. Creating...", indexName);
 
             var createIndexResponse = await _elasticClient.Indices.CreateAsync(indexName, c => c
-                // Sử dụng model FoodRecipeDocument để tự động tạo mapping
-                .Map<FoodRecipeDocument>(m => m.AutoMap())
+                .Map<RecipeDocument>(m => m.AutoMap()) // Dùng model RecipeDocument
             );
 
             if (createIndexResponse.IsValid)
-            {
-                _logger.LogInformation("Tạo index '{indexName}' thành công.", indexName);
-            }
+                _logger.LogInformation("Index '{indexName}' created successfully.", indexName);
             else
-            {
-                _logger.LogError("Tạo index '{indexName}' thất bại. Lý do: {debugInfo}", indexName, createIndexResponse.DebugInformation);
-            }
-        }
-
-        /// <summary>
-        /// Tạo index 'ingredients_master' nếu nó chưa tồn tại.
-        /// </summary>
-        private async Task CreateIngredientsMasterIndexAsync()
-        {
-            const string indexName = "ingredients_master";
-            var indexExistsResponse = await _elasticClient.Indices.ExistsAsync(indexName);
-
-            if (indexExistsResponse.Exists)
-            {
-                _logger.LogInformation("Index '{indexName}' đã tồn tại. Bỏ qua việc tạo mới.", indexName);
-                return;
-            }
-
-            _logger.LogInformation("Index '{indexName}' chưa tồn tại. Đang tạo mới...", indexName);
-
-            var createIndexResponse = await _elasticClient.Indices.CreateAsync(indexName, c => c
-                // Sử dụng model MasterIngredient để tự động tạo mapping
-                .Map<MasterIngredient>(m => m.AutoMap())
-            );
-
-            if (createIndexResponse.IsValid)
-            {
-                _logger.LogInformation("Tạo index '{indexName}' thành công.", indexName);
-            }
-            else
-            {
-                _logger.LogError("Tạo index '{indexName}' thất bại. Lý do: {debugInfo}", indexName, createIndexResponse.DebugInformation);
-            }
+                _logger.LogError("Index '{indexName}' creation failed: {debugInfo}", indexName, createIndexResponse.DebugInformation);
         }
     }
 }

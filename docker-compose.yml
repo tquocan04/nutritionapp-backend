@@ -9,14 +9,15 @@
       ASPNETCORE_ENVIRONMENT: "Development"
       ASPNETCORE_URLS: "http://+:8080"
       DatabaseSettings__DefaultConnection: "Server=sqlnutrition;Database=nutrition;User Id=sa;Password=Nutrition@pp123;TrustServerCertificate=true"
-      # Thêm cấu hình để kết nối với Elasticsearch
       ElasticsearchSettings__Url: "http://elasticsearch:9200" 
       TZ: Asia/Ho_Chi_Minh
     ports:
       - "8000:8080"
+    volumes:
+      - ./.env:/app/.env:ro
     depends_on:
       - sqlnutrition
-      - elasticsearch # <-- Thêm dependency vào elasticsearch
+      - elasticsearch
     restart: always
 
   sqlnutrition: 
