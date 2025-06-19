@@ -27,6 +27,7 @@ namespace nutritionapp.Extensions
         {
             services.AddScoped<IServiceManager, ServiceManager>();
             services.AddScoped<IIndexingService, IndexingService>();
+            services.AddScoped<IRecommendationService, RecommendationService>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

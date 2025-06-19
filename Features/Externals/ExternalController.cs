@@ -1,20 +1,18 @@
 ﻿using Features.Externals.Requests;
 using Features.Externals.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Features.Externals
 {
     [Route("api/external")]
     [ApiController]
-    public class ExternalController(IIndexingService indexingService) : ControllerBase
+    public class ExternalController(IIndexingService indexingService,
+        IRecommendationService recommendationService) 
+        : ControllerBase
     {
-        [HttpPost]
-        public async Task<IActionResult> PostFoodMass([FromBody] IList<FoodMassesGramRequest> req)
-        {
-            return Ok(req);
-        }
-
         [HttpPost("indexing/csv")]
         public async Task<IActionResult> RunCsvIndexing(IFormFile file)
         {
@@ -27,6 +25,17 @@ namespace Features.Externals
             await indexingService.ProcessFileAsync(stream);
 
             return Ok("Successful.");
+        }
+        
+        [HttpGet("recommendations/meal")]
+        [Authorize]
+        public async Task<IActionResult> GetRecommendMeals()
+        {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await recommendationService.GetRecommendationsForMealAsync(userId);
+
+            return Ok(result);
         }
     }
 }
