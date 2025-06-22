@@ -11,7 +11,7 @@ namespace Features.Externals.Services
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly string _apiKey = configuration["GoogleAI:ApiKey"] ?? throw new InvalidOperationException("Google AI ApiKey must be configured.");
-        private readonly string _modelName = "embedding-001"; // Model embedding of Google
+        private readonly string _modelName = "text-embedding-004"; // Model embedding of Google
         private readonly ILogger<GoogleEmbeddingService> _logger = logger;
 
         public async Task<float[]?> GetEmbeddingAsync(string textToEmbed)
