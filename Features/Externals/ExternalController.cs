@@ -27,13 +27,27 @@ namespace Features.Externals
             return Ok("Successful.");
         }
         
-        [HttpGet("recommendations/meal")]
+        [HttpGet("recommendations/recipes")]
         [Authorize]
         public async Task<IActionResult> GetRecommendMeals()
         {
             Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var result = await recommendationService.GetRecommendationsForMealAsync(userId);
+
+            return Ok(result);
+        }
+        
+        [HttpGet("recommendations/recipes/{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetRecommendRecipeDetail(string id)
+        {
+            var result = await recommendationService.GetRecommendationRecipeDetailAsync(id);
+
+            if (result == null)
+            {
+                return NotFound("Not found in database.");
+            }
 
             return Ok(result);
         }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nest;
 using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Features.Externals.Services
 {
@@ -179,6 +180,177 @@ namespace Features.Externals.Services
             }
             for (int i = 0; i < dimensions; i++) { sumVector[i] /= vectors.Count; }
             return sumVector;
+        }
+
+        public async Task<RecipeDetailDto?> GetRecommendationRecipeDetailAsync(string id)
+        {
+            var sttToSearch = id.ToString();
+
+            // Dùng Search API với một câu lệnh Term Query để tìm chính xác
+            var response = await _elasticClient.SearchAsync<RecipeDocument>(s => s
+                .Index("recipes") // Tìm trong index recipes
+                .Query(q => q
+                    .Term(t => t
+                        .Field(f => f.Stt) // Trên trường 'stt'
+                        .Value(sttToSearch)      // Với giá trị bằng với ID được truyền vào
+                    )
+                )
+                .Size(1) // Chỉ cần tìm 1 kết quả
+            );
+
+            // Lấy document đầu tiên được tìm thấy (nếu có)
+            var source = response.Documents.FirstOrDefault();
+
+            if (source == null)
+            {
+                _logger.LogWarning("Không tìm thấy công thức với STT: {RecipeId}", id);
+                return null;
+            }
+
+            // tách direction thành 1 mảng
+            string[] sentences = source.Directions.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
+
+            List<string> cleanedDirection = sentences
+                                            .Select(step => step.Trim()) // Loại bỏ các khoảng trắng thừa ở đầu và cuối mỗi dòng.
+                                            .Where(step => !string.IsNullOrWhiteSpace(step)) // Lọc bỏ các dòng hoàn toàn rỗng.
+                                            .ToList();
+
+            if (cleanedDirection.Count > 0)
+            {
+                // Xóa phần tử ở vị trí cuối cùng. 
+                cleanedDirection.RemoveAt(cleanedDirection.Count - 1);
+            }
+
+
+            // TÁCH INGREDIENT_GRAMS THÀNH TỪNG CẶP GIÁ TRỊ NAME-GRAMS
+            var resultList = MergeAndParse(source.IngredientGrams, source.Usde_Ingredients_Per_100g);
+
+            // Ánh xạ (map) dữ liệu từ RecipeDocument (dữ liệu thô từ ES)
+            // sang RecipeDetailDto (dữ liệu sạch để trả về cho client).
+            var recipeDetail = new RecipeDetailDto
+            {
+                Id = source.Stt,
+                Recipe_name = source.RecipeName,
+                Prep_time = source.PrepTime,
+                Cook_time = source.CookTime,
+                Total_time = source.TotalTime,
+                Servings = source.Servings,
+                Yield = source.Yield,
+                Directions = cleanedDirection,
+                Timing = source.Timing,
+                Nutrition = source.NutritionRaw,
+                Calories = source.Calories,
+                Protein = source.Protein,
+                Carbs = source.Carbs,
+                Fat = source.Fat,
+                Img_src = source.ImageUrl,
+                Ingredient_Grams = resultList
+                // Chuyển đổi danh sách đối tượng thành danh sách chuỗi
+                //Ingredients = source.Ingredients.Select(i => i.RawText).ToList(),
+            };
+
+            return recipeDetail;
+        }
+
+        /// <summary>
+        /// Kết hợp và phân tích hai chuỗi dữ liệu thành phần để tạo ra một danh sách hoàn chỉnh.
+        /// </summary>
+        public static List<IngredientGrams> MergeAndParse(string gramsString, string nutritionString)
+        {
+            // 1. Phân tích chuỗi khối lượng thành một Dictionary để tra cứu nhanh
+            var gramsLookup = ParseGramsString(gramsString);
+
+            // 2. Phân tích chuỗi dinh dưỡng và kết hợp với dữ liệu khối lượng
+            return ParseNutritionString(nutritionString, gramsLookup);
+        }
+
+        /// <summary>
+        /// Helper để parse chuỗi "name: grams"
+        /// </summary>
+        private static Dictionary<string, string> ParseGramsString(string input)
+        {
+            var dictionary = new Dictionary<string, string>();
+            if (string.IsNullOrWhiteSpace(input)) return dictionary;
+
+            var pairs = input.Split(',');
+            foreach (var pair in pairs)
+            {
+                var parts = pair.Split(':', 2);
+                if (parts.Length == 2)
+                {
+                    var name = parts[0].Trim().ToLower(); // Chuẩn hóa về chữ thường để dễ so sánh
+                    var grams = parts[1].Trim();
+                    dictionary[name] = grams;
+                }
+            }
+            return dictionary;
+        }
+
+        /// <summary>
+        /// Helper để parse chuỗi nutrition và tìm kiếm khối lượng tương ứng
+        /// </summary>
+        private static List<IngredientGrams> ParseNutritionString(string input, Dictionary<string, string> gramsLookup)
+        {
+            var resultList = new List<IngredientGrams>();
+            if (string.IsNullOrWhiteSpace(input)) return resultList;
+
+            var entries = input.Split(["}, "], StringSplitOptions.RemoveEmptyEntries);
+            foreach (var entry in entries)
+            {
+                var parts = entry.Split([": {"], 2, StringSplitOptions.None);
+                if (parts.Length != 2) continue;
+
+                var name = parts[0].Trim();
+                var jsonData = "{" + parts[1].Trim();
+                if (!jsonData.EndsWith('}')) jsonData += "}";
+                var validJsonData = jsonData.Replace("'", "\"");
+
+                try
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var nutritionData = System.Text.Json.JsonSerializer.Deserialize<UsdaIngredientsPer100g>(validJsonData, options);
+
+                    if (nutritionData != null)
+                    {
+                        // Tìm khối lượng tương ứng bằng cách đối chiếu thông minh
+                        var grams = FindMatchingGrams(name, gramsLookup);
+
+                        resultList.Add(new IngredientGrams
+                        {
+                            Name = name,
+                            Grams = grams,
+                            Usda_ingredients_per_100g = nutritionData
+                        });
+                    }
+                }
+                catch (System.Text.Json.JsonException) { /* Bỏ qua nếu JSON không hợp lệ */ }
+            }
+            return resultList;
+        }
+
+        /// <summary>
+        /// Tìm kiếm thông minh: kiểm tra xem tên này có chứa hoặc được chứa bởi một key trong dictionary không
+        /// </summary>
+        private static string FindMatchingGrams(string nameToFind, Dictionary<string, string> gramsLookup)
+        {
+            var searchKey = nameToFind.ToLower();
+
+            // Thử tìm kiếm khớp chính xác trước
+            if (gramsLookup.TryGetValue(searchKey, out var exactMatch))
+            {
+                return exactMatch;
+            }
+
+            // Nếu không, thử tìm kiếm "chứa"
+            foreach (var kvp in gramsLookup)
+            {
+                if (kvp.Key.Contains(searchKey) || searchKey.Contains(kvp.Key))
+                {
+                    return kvp.Value;
+                }
+            }
+
+            return "0g"; // Trả về giá trị mặc định nếu không tìm thấy
         }
     }
 }

@@ -61,6 +61,7 @@ public class IndexingService(IElasticClient elasticClient, IEmbeddingService emb
                 CookTime = record.CookTime,
                 PrepTime = record.PrepTime,
                 TotalTime = record.TotalTime,
+                Timing = record.Timing,
                 Servings = servings,
                 Yield = record.Yield,
                 Rating = rating,
@@ -71,6 +72,7 @@ public class IndexingService(IElasticClient elasticClient, IEmbeddingService emb
                 Fat = fat,
                 Protein = protein,
                 Usde_Ingredients_Per_100g = record.Usde_Ingredients_Per_100g,
+                IngredientGrams = record.IngredientGrams,
                 Ingredients = ingredientPhrases.Select(p => new Ingredient { RawText = p }).ToList(),
                 IngredientVector = averageVector
             };

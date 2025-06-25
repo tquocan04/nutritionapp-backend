@@ -19,6 +19,9 @@ public class RecipeCsvRecord
     [Name("total_time")]
     public string TotalTime { get; set; } = string.Empty;
 
+    [Name("timing")]
+    public string Timing { get; set; } = string.Empty;
+
     [Name("servings")]
     public string Servings { get; set; } = string.Empty;
 
@@ -27,6 +30,9 @@ public class RecipeCsvRecord
 
     [Name("ingredients")]
     public string Ingredients { get; set; } = string.Empty;
+    
+    [Name("ingredient_grams")]
+    public string IngredientGrams { get; set; } = string.Empty;
 
     [Name("directions")]
     public string Directions { get; set; } = null!;

@@ -5,5 +5,6 @@ namespace Features.Externals.Services
     public interface IRecommendationService
     {
         Task<IEnumerable<RecipeDto>> GetRecommendationsForMealAsync(Guid userId);
+        Task<RecipeDetailDto?> GetRecommendationRecipeDetailAsync(string id);
     }
 }

@@ -1,5 +1,4 @@
-﻿using CsvHelper.Configuration.Attributes;
-using Nest;
+﻿using Nest;
 
 namespace Features.Externals.Models;
 
@@ -20,6 +19,9 @@ public class RecipeDocument
 
     [Text(Name = "total_time")]
     public string TotalTime { get; set; } = string.Empty;
+    
+    [Text(Name = "timing")]
+    public string Timing { get; set; } = string.Empty;
 
     [Number(NumberType.Integer, Name = "servings")]
     public int Servings { get; set; }
@@ -57,6 +59,9 @@ public class RecipeDocument
     [Text(Name = "nutrition_raw")]
     public string NutritionRaw { get; set; } = null!;
 
+    [Text(Name = "ingredient_grams")]
+    public string IngredientGrams { get; set; } = string.Empty;
+    
     [Nested(Name = "ingredients")]
     public List<Ingredient> Ingredients { get; set; } = [];
 
