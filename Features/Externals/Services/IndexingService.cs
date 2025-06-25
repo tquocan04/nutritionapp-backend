@@ -46,15 +46,31 @@ public class IndexingService(IElasticClient elasticClient, IEmbeddingService emb
 
             var averageVector = CalculateAverageVector(ingredientVectors);
             _ = float.TryParse(record.Rating, out float rating);
+            _ = float.TryParse(record.Calories, out float calories);
+            _ = float.TryParse(record.Carbs, out float carbs);
+            _ = float.TryParse(record.Fat, out float fat);
+            _ = float.TryParse(record.Protein, out float protein);
+            _ = int.TryParse(record.Servings, out int servings);
 
             var doc = new RecipeDocument
             {
-                Title = record.RecipeName,
+                Stt = record.Stt,
+                RecipeName = record.RecipeName,
                 Url = record.Url,
                 ImageUrl = record.ImgSrc,
+                CookTime = record.CookTime,
+                PrepTime = record.PrepTime,
+                TotalTime = record.TotalTime,
+                Servings = servings,
+                Yield = record.Yield,
                 Rating = rating,
                 Directions = record.Directions,
                 NutritionRaw = record.Nutrition,
+                Calories = calories,
+                Carbs = carbs,
+                Fat = fat,
+                Protein = protein,
+                Usde_Ingredients_Per_100g = record.Usde_Ingredients_Per_100g,
                 Ingredients = ingredientPhrases.Select(p => new Ingredient { RawText = p }).ToList(),
                 IngredientVector = averageVector
             };

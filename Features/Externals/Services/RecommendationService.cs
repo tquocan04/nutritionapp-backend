@@ -155,13 +155,13 @@ namespace Features.Externals.Services
 
             var recommendations = searchResponse.Documents.Select(doc => new RecipeDto
             {
-                Title = doc.Title,
-                ImageUrl = doc.ImageUrl,
-                Rating = doc.Rating,
-                Directions = doc.Directions,
-                NutritionRaw = doc.NutritionRaw,
-                // Lấy danh sách chuỗi thành phần thô để hiển thị
-                Ingredients = doc.Ingredients.Select(i => i.RawText).ToList()
+                Id = doc.Stt,
+                Img_src = doc.ImageUrl,
+                Recipe_name = doc.RecipeName,
+                //Directions = doc.Directions,
+                //NutritionRaw = doc.NutritionRaw,
+                //// Lấy danh sách chuỗi thành phần thô để hiển thị
+                //Ingredients = doc.Ingredients.Select(i => i.RawText).ToList()
             }).ToList();
 
             return recommendations;
